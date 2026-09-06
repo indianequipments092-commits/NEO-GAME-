@@ -1,6 +1,6 @@
 extends Node2D
 
-# NEON SPACE SURVIVAL — Phase 6 ships / drones / modules / meta progression.
+# NEON SPACE SURVIVAL — Phase 7 polish / VFX / audio / game juice.
 const XP_ORB := preload("res://scenes/xp_orb.tscn")
 const ENEMY := preload("res://scenes/enemy.tscn")
 const BOSS := preload("res://scenes/boss.tscn")
@@ -13,9 +13,11 @@ var enemy_spawn_interval := 2.5
 var boss_spawned := false
 var module_input_cooldown := 0.0
 var meta_cores := 0
+var juice_time := 0.0
 
 @onready var timer_label: Label = $HUD/TimerLabel
 @onready var player: CharacterBody2D = $Player
+@onready var boss_label: Label = $HUD/BossLabel
 
 func _ready() -> void:
 	timer_label.text = "SURVIVAL  00:00"
@@ -26,6 +28,7 @@ func _process(delta: float) -> void:
 	xp_spawn_time += delta
 	enemy_spawn_time += delta
 	module_input_cooldown = maxf(0.0, module_input_cooldown - delta)
+	juice_time += delta
 
 	if xp_spawn_time >= xp_spawn_interval:
 		xp_spawn_time = 0.0
@@ -40,6 +43,8 @@ func _process(delta: float) -> void:
 		_spawn_boss()
 
 	_handle_module_input()
+	_update_boss_juice()
+
 	var total_seconds := int(survival_time)
 	var minutes := total_seconds / 60
 	var seconds := total_seconds % 60
@@ -79,8 +84,14 @@ func _spawn_boss() -> void:
 	var boss := BOSS.instantiate()
 	boss.position = Vector2(640, 100)
 	add_child(boss)
-	var boss_label := $HUD/BossLabel
 	boss_label.visible = true
+
+func _update_boss_juice() -> void:
+	if not boss_spawned:
+		return
+	var pulse := 0.85 + sin(juice_time * 5.0) * 0.15
+	boss_label.modulate.a = pulse
+	boss_label.scale = Vector2.ONE * (1.0 + sin(juice_time * 5.0) * 0.03)
 
 func add_meta_core() -> void:
 	meta_cores += 1
