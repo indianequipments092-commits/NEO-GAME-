@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-## Core player controller and Phase 3 combat controller.
+## Core player controller with Phase 3 combat and Phase 4 progression.
 const ENERGY_PROJECTILE := preload("res://scenes/energy_projectile.tscn")
 
 @export var move_speed: float = 360.0
@@ -11,6 +11,10 @@ const ENERGY_PROJECTILE := preload("res://scenes/energy_projectile.tscn")
 var last_direction := Vector2.UP
 var fire_cooldown := 0.0
 var projectiles_fired := 0
+var xp := 0
+var level := 1
+var xp_to_next_level := 100
+var upgrade_points := 0
 
 func _physics_process(delta: float) -> void:
 	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -36,3 +40,21 @@ func fire_energy() -> void:
 	var combat_label := get_tree().current_scene.get_node_or_null("HUD/CombatLabel")
 	if combat_label:
 		combat_label.text = "ENERGY  •  %03d" % projectiles_fired
+
+func collect_xp(amount: int) -> void:
+	xp += amount
+	while xp >= xp_to_next_level:
+		xp -= xp_to_next_level
+		level += 1
+		upgrade_points += 1
+		xp_to_next_level = 100 + (level - 1) * 50
+	_update_progression_hud()
+
+func _update_progression_hud() -> void:
+	var scene := get_tree().current_scene
+	var level_label := scene.get_node_or_null("HUD/LevelLabel")
+	var xp_label := scene.get_node_or_null("HUD/XPLabel")
+	if level_label:
+		level_label.text = "LV  %02d" % level
+	if xp_label:
+		xp_label.text = "XP  %03d / %03d" % [xp, xp_to_next_level]
