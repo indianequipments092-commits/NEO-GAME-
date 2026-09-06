@@ -88,7 +88,15 @@
 **Status: Complete**
 
 ## Phase 9 — Economy / Ads / Monetization
-Planned.
+- Fictional in-game Credits economy
+- Persistent Credits and total-earned storage with ConfigFile
+- Survival-time run reward calculation
+- Credits HUD integration
+- Rewarded-ad provider abstraction hook without a live ad SDK
+- Placeholder reward callback designed for future verified provider callbacks
+- Economy foundation ready for store-platform integration in later QA/release work
+
+**Status: Complete**
 
 ## Phase 10 — Testing / Optimization / QA
 Planned.
