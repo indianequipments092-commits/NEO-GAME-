@@ -77,7 +77,15 @@
 **Status: Complete**
 
 ## Phase 8 — UI / Menus / Settings
-Planned.
+- Pause overlay opened with the standard UI cancel action
+- Resume and Settings menu buttons
+- Settings panel for music, SFX, and screen-shake preferences
+- Persistent local settings using a Godot ConfigFile
+- Keyboard/controller-friendly button focus setup
+- Main HUD updated with pause/settings hint
+- Dedicated menu and settings scripts/scenes
+
+**Status: Complete**
 
 ## Phase 9 — Economy / Ads / Monetization
 Planned.
