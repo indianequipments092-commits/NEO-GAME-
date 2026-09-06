@@ -25,7 +25,7 @@
 - Player firing control with a configurable fire interval
 - Direction memory so energy follows the player's last movement direction
 - Projectile lifetime and automatic cleanup
-- Generic `take_damage()` hook for future damageable targets
+- Damage hook used by enemy and boss targets
 - Combat counter HUD and Space-key control hint
 
 **Status: Complete**
@@ -36,20 +36,20 @@
 - Player XP tracking and collection
 - Level-up threshold and increasing XP requirements
 - Level counter and XP progress HUD
-- Upgrade-point reward on level-up for future roguelite choices
-- Progression hooks ready for Phase 5+ content
+- Upgrade-point reward on level-up
+- Progression hooks for module choices
 
 **Status: Complete**
 
 ## Phase 5 — Enemies / Bosses / World Content
-- Basic pursuing enemy scene with collision-based contact hazard behavior
-- Enemy spawning from arena edges during the survival run
+- Pursuing enemy with real health and projectile damage handling
+- Enemy defeat XP rewards
+- Enemy spawning from arena edges
 - Player hull/health system with brief contact invulnerability
 - Hull status HUD and run-ended state
-- Large boss encounter that appears after 60 seconds
-- Boss encounter HUD indicator and pulsing visual
-- XP spawning hooks retained for future enemy defeat rewards
-- Phase 5 world-content foundation ready for Phase 6
+- Boss encounter after 60 seconds
+- Boss health, projectile damage, defeat, and XP reward
+- Pulsing boss encounter HUD indicator
 
 **Status: Complete**
 
@@ -61,8 +61,7 @@
 - Drone module that deploys the support drone
 - Upgrade-point spending through simple in-game module controls
 - Module level HUD with engine/core/drone levels
-- Meta-progression core hooks for future persistent progression
-- Ship progression foundation ready for Phase 7+ polish
+- Meta-progression core hooks
 
 **Status: Complete**
 
@@ -70,9 +69,8 @@
 - Procedural animated starfield background
 - Lightweight gameplay juice controller
 - Pulsing boss encounter indicator
-- HUD feedback/tween hook for future events
+- HUD feedback/tween hook
 - Polish-ready structure for particles and audio integration
-- Visual/gameplay feedback foundation ready for Phase 8
 
 **Status: Complete**
 
@@ -82,7 +80,7 @@
 - Settings panel for music, SFX, and screen-shake preferences
 - Persistent local settings using a Godot ConfigFile
 - Keyboard/controller-friendly button focus setup
-- Main HUD updated with pause/settings hint
+- Main HUD pause/settings hint
 - Dedicated menu and settings scripts/scenes
 
 **Status: Complete**
@@ -94,27 +92,38 @@
 - Credits HUD integration
 - Rewarded-ad provider abstraction hook without a live ad SDK
 - Placeholder reward callback designed for future verified provider callbacks
-- Economy foundation ready for store-platform integration in later QA/release work
 
 **Status: Complete**
 
 ## Phase 10 — Testing / Optimization / QA
-- Fixed the support-drone orbit/pulse implementation
+- Fixed support-drone orbit/pulse implementation
 - Connected run-end survival rewards to the actual game-over path
 - Prevented duplicate run rewards
 - Reduced unnecessary per-frame Credits HUD updates
-- Added a dedicated Phase 10 QA checklist covering gameplay, UI, progression, economy, and persistence
+- Added Phase 10 QA checklist
 - Documented manual runtime validation and profiler checks
 
 **Status: Complete — repository QA pass finished; Godot runtime validation remains manual**
 
 ## Phase 11 — Release / Store Preparation
-- Release and store-readiness checklist
+- Release/store-readiness checklist
 - Android / Google Play AAB release guidance
 - Current Google Play target API requirement recorded (Android 16 / API 36+)
 - Release signing and secret-handling safeguards documented
 - Versioning policy documented
-- Store assets and Play Console manual gates documented
+- Launcher icon and project release metadata added
+- Android touch controls integrated and hidden automatically on non-touch devices
+- Game-over restart control added
 - Final clean-checkout release gate documented
 
-**Status: Complete — repository release preparation finished; final local export and Play Console submission remain manual**
+**Status: Complete — repository implementation finished; final local Godot export/device testing and Play Console submission remain manual**
+
+## Final Integration / Defect Fixes
+- Corrected combat collision-layer separation so projectiles target enemies/bosses without consuming XP orbs
+- Added real enemy and boss `take_damage()` implementations
+- Added enemy/boss defeat XP rewards
+- Added touch input using the existing movement/fire actions
+- Added release launcher icon, version `1.0.0`, and mobile canvas configuration
+- Updated README and release documentation to match the actual repository state
+
+**Status: Complete**
