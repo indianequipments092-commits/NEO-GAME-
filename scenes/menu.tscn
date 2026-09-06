@@ -1,0 +1,120 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource path="res://scripts/menu.gd" type="Script" id="1_menu"]
+
+[sub_resource type="StyleBoxFlat" id="PanelBox"]
+bg_color = Color(0.015, 0.02, 0.06, 0.96)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.8, 1, 0.8)
+
+[node name="Menu" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_menu")
+
+[node name="PausePanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="PausePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="PausePanel"]
+layout_mode = 0
+offset_left = 490.0
+offset_top = 230.0
+offset_right = 790.0
+offset_bottom = 490.0
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="PausePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PausePanel/VBox"]
+custom_minimum_size = Vector2(300, 48)
+layout_mode = 2
+text = "RESUME"
+
+[node name="SettingsButton" type="Button" parent="PausePanel/VBox"]
+custom_minimum_size = Vector2(300, 48)
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="SettingsPanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="SettingsPanel"]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 150.0
+offset_right = 870.0
+offset_bottom = 570.0
+theme_override_styles/panel = SubResource("PanelBox")
+
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel/Panel"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 32.0
+offset_right = 420.0
+offset_bottom = 388.0
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="SettingsPanel/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="MusicButton" type="Button" parent="SettingsPanel/Panel/VBox"]
+custom_minimum_size = Vector2(380, 46)
+layout_mode = 2
+text = "MUSIC: ON"
+
+[node name="SFXButton" type="Button" parent="SettingsPanel/Panel/VBox"]
+custom_minimum_size = Vector2(380, 46)
+layout_mode = 2
+text = "SFX: ON"
+
+[node name="ShakeButton" type="Button" parent="SettingsPanel/Panel/VBox"]
+custom_minimum_size = Vector2(380, 46)
+layout_mode = 2
+text = "SCREEN SHAKE: ON"
+
+[node name="BackButton" type="Button" parent="SettingsPanel/Panel/VBox"]
+custom_minimum_size = Vector2(380, 46)
+layout_mode = 2
+text = "BACK"
+
+[connection signal="pressed" from="PausePanel/VBox/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="PausePanel/VBox/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SettingsPanel/Panel/VBox/MusicButton" to="." method="_on_music_pressed"]
+[connection signal="pressed" from="SettingsPanel/Panel/VBox/SFXButton" to="." method="_on_sfx_pressed"]
+[connection signal="pressed" from="SettingsPanel/Panel/VBox/ShakeButton" to="." method="_on_shake_pressed"]
+[connection signal="pressed" from="SettingsPanel/Panel/VBox/BackButton" to="." method="_on_back_pressed"]
