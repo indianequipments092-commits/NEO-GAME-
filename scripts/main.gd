@@ -1,6 +1,6 @@
 extends Node2D
 
-# NEON SPACE SURVIVAL — Phase 5 enemies / boss / world content.
+# NEON SPACE SURVIVAL — Phase 6 ships / drones / modules / meta progression.
 const XP_ORB := preload("res://scenes/xp_orb.tscn")
 const ENEMY := preload("res://scenes/enemy.tscn")
 const BOSS := preload("res://scenes/boss.tscn")
@@ -11,6 +11,8 @@ var enemy_spawn_time := 0.0
 var xp_spawn_interval := 1.5
 var enemy_spawn_interval := 2.5
 var boss_spawned := false
+var module_input_cooldown := 0.0
+var meta_cores := 0
 
 @onready var timer_label: Label = $HUD/TimerLabel
 @onready var player: CharacterBody2D = $Player
@@ -23,6 +25,7 @@ func _process(delta: float) -> void:
 	survival_time += delta
 	xp_spawn_time += delta
 	enemy_spawn_time += delta
+	module_input_cooldown = maxf(0.0, module_input_cooldown - delta)
 
 	if xp_spawn_time >= xp_spawn_interval:
 		xp_spawn_time = 0.0
@@ -36,10 +39,24 @@ func _process(delta: float) -> void:
 		boss_spawned = true
 		_spawn_boss()
 
+	_handle_module_input()
 	var total_seconds := int(survival_time)
 	var minutes := total_seconds / 60
 	var seconds := total_seconds % 60
 	timer_label.text = "SURVIVAL  %02d:%02d" % [minutes, seconds]
+
+func _handle_module_input() -> void:
+	if module_input_cooldown > 0.0 or player.upgrade_points <= 0:
+		return
+	if Input.is_key_pressed(KEY_1):
+		player.install_module("engine")
+		module_input_cooldown = 0.25
+	elif Input.is_key_pressed(KEY_2):
+		player.install_module("core")
+		module_input_cooldown = 0.25
+	elif Input.is_key_pressed(KEY_3):
+		player.install_module("drone")
+		module_input_cooldown = 0.25
 
 func _spawn_xp_orb() -> void:
 	var orb := XP_ORB.instantiate()
@@ -64,6 +81,12 @@ func _spawn_boss() -> void:
 	add_child(boss)
 	var boss_label := $HUD/BossLabel
 	boss_label.visible = true
+
+func add_meta_core() -> void:
+	meta_cores += 1
+
+func get_meta_cores() -> int:
+	return meta_cores
 
 func _random_edge_position() -> Vector2:
 	var edge := randi() % 4
