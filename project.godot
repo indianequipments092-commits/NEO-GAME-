@@ -1,5 +1,5 @@
 ; NEON SPACE SURVIVAL — Godot 4 project configuration
-; Phase 1: GitHub Base & Project Setup
+; Phase 3: Combat foundation
 
 config_version=5
 
@@ -34,4 +34,8 @@ move_up={
 move_down={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":83), Object(InputEventKey,"physical_keycode":4194322)]
+}
+fire={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":32)]
 }
