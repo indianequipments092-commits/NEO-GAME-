@@ -1,24 +1,21 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource path="res://scripts/player.gd" type="Script" id="1_player"]
+[ext_resource path="res://assets/player_ship.svg" type="Texture2D" id="2_ship"]
 
 [sub_resource type="CircleShape2D" id="Circle_player"]
-radius = 24.0
-
-[sub_resource type="Gradient" id="Gradient_player"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(0.1, 0.9, 1, 1, 0.35, 0.1, 1, 1)
+radius = 38.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_player")
 
-[node name="Visual" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(0, -28, 20, 18, 0, 10, -20, 18)
-color = Color(0.15, 0.85, 1, 1)
+[node name="FlameGlow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-24, 18, -9, 52, 0, 28, 9, 52, 24, 18, 0, 38)
+color = Color(1, 0.38, 0.05, 0.9)
 
-[node name="Core" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(0, -12, 9, 8, 0, 5, -9, 8)
-color = Color(0.9, 0.95, 1, 1)
+[node name="ShipSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_ship")
+scale = Vector2(0.105, 0.105)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Circle_player")
