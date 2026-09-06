@@ -54,7 +54,17 @@
 **Status: Complete**
 
 ## Phase 6 — Ships / Drones / Modules / Meta Progression
-Planned.
+- Support drone scene with orbital follow behavior
+- Drone pulse callback connected to the player
+- Engine module that improves movement speed
+- Core module that improves energy fire cadence
+- Drone module that deploys the support drone
+- Upgrade-point spending through simple in-game module controls
+- Module level HUD with engine/core/drone levels
+- Meta-progression core hooks for future persistent progression
+- Ship progression foundation ready for Phase 7+ polish
+
+**Status: Complete**
 
 ## Phase 7 — Polish / VFX / Audio / Game Juice
 Planned.
