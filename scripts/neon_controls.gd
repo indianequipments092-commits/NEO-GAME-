@@ -1,6 +1,10 @@
 extends Control
 
 ## Phase 12 — adaptive neon landscape joystick and combat controls.
+signal pause_requested
+signal special_requested
+signal dash_requested
+
 const CYAN := Color("39d9ff")
 const BLUE := Color("3d7dff")
 const PURPLE := Color("a66cff")
@@ -39,8 +43,13 @@ func _input(event: InputEvent) -> void:
 				Input.action_press("fire")
 				get_viewport().set_input_as_handled()
 			elif _in_circle(pos, Vector2(size.x - 235.0, size.y - 175.0), 50.0):
+				special_requested.emit()
 				get_viewport().set_input_as_handled()
 			elif _in_circle(pos, Vector2(size.x - 255.0, size.y - 70.0), 45.0):
+				dash_requested.emit()
+				get_viewport().set_input_as_handled()
+			elif _in_circle(pos, Vector2(size.x - 48.0, 42.0), 34.0):
+				pause_requested.emit()
 				get_viewport().set_input_as_handled()
 		else:
 			if event.index == joystick_id:
