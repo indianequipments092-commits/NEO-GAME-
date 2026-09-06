@@ -139,8 +139,15 @@ func _die() -> void:
 	var scene := get_tree().current_scene
 	if scene.has_method("claim_run_reward"):
 		scene.claim_run_reward()
+	# Game-over UI must be the only touch target after death.
+	var mobile_controls := scene.get_node_or_null("MobileControls")
+	if mobile_controls:
+		mobile_controls.visible = false
+		mobile_controls.process_mode = Node.PROCESS_MODE_DISABLED
 	var game_over := scene.get_node_or_null("HUD/GameOverPanel")
 	if game_over:
+		game_over.process_mode = Node.PROCESS_MODE_ALWAYS
+		game_over.mouse_filter = Control.MOUSE_FILTER_STOP
 		game_over.visible = true
 		var label := game_over.get_node_or_null("GameOverLabel")
 		if label:
@@ -150,9 +157,13 @@ func _die() -> void:
 			sub.text = "YOUR SHIP HAS BEEN DESTROYED"
 		var restart := game_over.get_node_or_null("RestartButton")
 		if restart:
+			restart.process_mode = Node.PROCESS_MODE_ALWAYS
+			restart.mouse_filter = Control.MOUSE_FILTER_STOP
 			restart.visible = true
 		var exit := game_over.get_node_or_null("ExitButton")
 		if exit:
+			exit.process_mode = Node.PROCESS_MODE_ALWAYS
+			exit.mouse_filter = Control.MOUSE_FILTER_STOP
 			exit.visible = true
 	get_tree().paused = true
 	queue_redraw()
@@ -211,7 +222,6 @@ func _update_module_hud() -> void:
 		label.text = "MODULES E:%d C:%d D:%d  •  POINTS:%d" % [engine_module_level, core_module_level, drone_module_level, upgrade_points]
 
 func _draw() -> void:
-	# Intense twin engine flames behind the ship.
 	var pulse := 0.85 + sin(Time.get_ticks_msec() * 0.012) * 0.15
 	var flame_len := 55.0 * pulse
 	for side in [-1.0, 1.0]:
