@@ -35,22 +35,17 @@ func _process(delta: float) -> void:
 	enemy_spawn_time += delta
 	module_input_cooldown = maxf(0.0, module_input_cooldown - delta)
 	juice_time += delta
-
 	if xp_spawn_time >= xp_spawn_interval:
 		xp_spawn_time = 0.0
 		_spawn_xp_orb()
-
 	if enemy_spawn_time >= enemy_spawn_interval:
 		enemy_spawn_time = 0.0
 		_spawn_enemy()
-
 	if survival_time >= 60.0 and not boss_spawned:
 		boss_spawned = true
 		_spawn_boss()
-
 	_handle_module_input()
 	_update_boss_juice()
-
 	var total_seconds := int(survival_time)
 	var minutes := total_seconds / 60
 	var seconds := total_seconds % 60
@@ -104,12 +99,12 @@ func claim_run_reward() -> void:
 	if run_reward_claimed:
 		return
 	run_reward_claimed = true
-	var reward := economy.claim_run_reward(int(survival_time))
+	var reward: int = economy.claim_run_reward(int(survival_time))
 	credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
 func claim_rewarded_ad_placeholder() -> void:
 	## Safe integration hook only; no live ad SDK is bundled in this project.
-	var reward := economy.claim_ad_reward_placeholder()
+	var reward: int = economy.claim_ad_reward_placeholder()
 	if reward > 0:
 		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
@@ -126,14 +121,10 @@ func get_meta_cores() -> int:
 func _random_edge_position() -> Vector2:
 	var edge := randi() % 4
 	match edge:
-		0:
-			return Vector2(randf_range(60.0, 1220.0), 60.0)
-		1:
-			return Vector2(randf_range(60.0, 1220.0), 660.0)
-		2:
-			return Vector2(60.0, randf_range(60.0, 660.0))
-		_:
-			return Vector2(1220.0, randf_range(60.0, 660.0))
+		0: return Vector2(randf_range(60.0, 1220.0), 60.0)
+		1: return Vector2(randf_range(60.0, 1220.0), 660.0)
+		2: return Vector2(60.0, randf_range(60.0, 660.0))
+		_: return Vector2(1220.0, randf_range(60.0, 660.0))
 
 func _update_progression_hud() -> void:
 	var level_label := $HUD/LevelLabel
