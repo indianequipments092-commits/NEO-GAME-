@@ -68,7 +68,7 @@ func _build_game_over_actions() -> void:
 		sub.add_theme_font_size_override("font_size", 14)
 		sub.add_theme_color_override("font_color", Color("ff7088"))
 		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+		sub.text = "YOUR SHIP HAS BEEN DESTROYED"
 		panel.add_child(sub)
 	var restart := panel.get_node_or_null("RestartButton")
 	if restart:
@@ -87,7 +87,7 @@ func _build_game_over_actions() -> void:
 		exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
 		exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
 		exit.pressed.connect(exit_to_lobby)
-		panel.add_child(exit)
+	panel.add_child(exit)
 	exit.visible = false
 
 func _game_over_button_style(accent: Color) -> StyleBoxFlat:
