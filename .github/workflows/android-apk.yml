@@ -26,6 +26,7 @@ jobs:
 
       - name: Install Android platform and build tools
         run: |
+          yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.1.0"
 
       - name: Download Godot 4.6.3
