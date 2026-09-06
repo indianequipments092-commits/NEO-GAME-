@@ -61,6 +61,8 @@ func _process(delta: float) -> void:
 
 func _build_game_over_actions() -> void:
 	var panel := game_over_panel
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	var sub := panel.get_node_or_null("GameOverSubLabel")
 	if sub == null:
 		sub = Label.new()
@@ -70,29 +72,47 @@ func _build_game_over_actions() -> void:
 		sub.add_theme_font_size_override("font_size", 14)
 		sub.add_theme_color_override("font_color", Color("ff7088"))
 		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
 	if sub.get_parent() == null:
 		panel.add_child(sub)
+	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+
 	var restart := panel.get_node_or_null("RestartButton") as Button
 	if restart:
+		restart.visible = true
+		restart.disabled = false
+		restart.mouse_filter = Control.MOUSE_FILTER_STOP
+		restart.process_mode = Node.PROCESS_MODE_ALWAYS
+		restart.focus_mode = Control.FOCUS_ALL
 		restart.position = Vector2(45, 160)
 		restart.size = Vector2(155, 55)
 		restart.add_theme_font_size_override("font_size", 16)
+		restart.text = "RESTART RUN"
+		restart.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
+		restart.add_theme_stylebox_override("pressed", _game_over_button_style(Color("39d9ff")))
+		restart.add_theme_stylebox_override("hover", _game_over_button_style(Color("39d9ff")))
 	if restart and not restart.pressed.is_connected(restart_run):
 		restart.pressed.connect(restart_run)
+
 	var exit := panel.get_node_or_null("ExitButton") as Button
 	if exit == null:
 		exit = Button.new()
 		exit.name = "ExitButton"
-		exit.position = Vector2(220, 160)
-		exit.size = Vector2(155, 55)
-		exit.text = "EXIT"
-		exit.add_theme_font_size_override("font_size", 16)
-		exit.add_theme_color_override("font_color", Color("dff8ff"))
-		exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
-		exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
-		exit.pressed.connect(exit_to_lobby)
 		panel.add_child(exit)
+	exit.visible = true
+	exit.disabled = false
+	exit.mouse_filter = Control.MOUSE_FILTER_STOP
+	exit.process_mode = Node.PROCESS_MODE_ALWAYS
+	exit.focus_mode = Control.FOCUS_ALL
+	exit.position = Vector2(220, 160)
+	exit.size = Vector2(155, 55)
+	exit.text = "EXIT"
+	exit.add_theme_font_size_override("font_size", 16)
+	exit.add_theme_color_override("font_color", Color("dff8ff"))
+	exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
+	exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
+	exit.add_theme_stylebox_override("hover", _game_over_button_style(Color("39d9ff")))
+	if not exit.pressed.is_connected(exit_to_lobby):
+		exit.pressed.connect(exit_to_lobby)
 
 func _game_over_button_style(accent: Color) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
@@ -105,7 +125,6 @@ func _game_over_button_style(accent: Color) -> StyleBoxFlat:
 func _set_game_over_state(value: bool) -> void:
 	game_over = value
 	game_over_panel.visible = value
-	# Game-over buttons must remain interactive while the gameplay scene is paused.
 	game_over_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	if mobile_controls:
 		mobile_controls.visible = not value
@@ -113,9 +132,11 @@ func _set_game_over_state(value: bool) -> void:
 		var controls := mobile_controls.get_node_or_null("Controls")
 		if controls:
 			controls.visible = not value
+			controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var joystick := mobile_controls.get_node_or_null("FloatingJoystick")
 		if joystick:
 			joystick.visible = not value
+			joystick.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if value:
 		Input.action_release("fire")
 		get_tree().paused = true
@@ -193,6 +214,7 @@ func claim_rewarded_ad_placeholder() -> void:
 
 func restart_run() -> void:
 	get_tree().paused = false
+	game_over = false
 	get_tree().reload_current_scene()
 
 func exit_to_lobby() -> void:
