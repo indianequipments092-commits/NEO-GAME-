@@ -63,10 +63,18 @@ offset_bottom = 56.0
 theme_override_font_sizes/font_size = 20
 text = "SURVIVAL  00:00"
 
+[node name="CombatLabel" type="Label" parent="HUD"]
+offset_left = 270.0
+offset_top = 31.0
+offset_right = 450.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 18
+text = "ENERGY  •  000"
+
 [node name="Hint" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 680.0
-offset_right = 500.0
+offset_right = 650.0
 offset_bottom = 710.0
 theme_override_font_sizes/font_size = 16
-text = "WASD / ARROWS  •  Move"
+text = "WASD / ARROWS  •  Move     SPACE  •  Energy"
