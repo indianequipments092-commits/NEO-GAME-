@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource path="res://scripts/energy_projectile.gd" type="Script" id="1_projectile"]
+
+[sub_resource type="CircleShape2D" id="Circle_projectile"]
+radius = 7.0
+
+[node name="EnergyProjectile" type="Area2D"]
+script = ExtResource("1_projectile")
+collision_layer = 2
+collision_mask = 1
+monitoring = true
+monitorable = true
+
+[node name="Glow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -12, 6, 0, 0, 12, -6, 0)
+color = Color(0.25, 0.95, 1, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -7, 3, 0, 0, 7, -3, 0)
+color = Color(0.9, 1, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Circle_projectile")
