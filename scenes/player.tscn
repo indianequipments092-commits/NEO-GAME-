@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource path="res://scripts/player.gd" type="Script" id="1_player"]
 [ext_resource path="res://assets/player_ship.svg" type="Texture2D" id="2_ship"]
+[ext_resource path="res://scripts/enemy_spawner.gd" type="Script" id="3_enemy_spawner"]
 
 [sub_resource type="CircleShape2D" id="Circle_player"]
 radius = 38.0
@@ -19,3 +20,7 @@ scale = Vector2(0.105, 0.105)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Circle_player")
+
+[node name="EnemySpawner" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("3_enemy_spawner")
