@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource path="res://scripts/boss.gd" type="Script" id="1_boss"]
+
+[sub_resource type="CircleShape2D" id="Circle_boss"]
+radius = 52.0
+
+[node name="Boss" type="CharacterBody2D"]
+script = ExtResource("1_boss")
+collision_layer = 4
+collision_mask = 1
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -58, 45, -30, 58, 20, 30, 52, 0, 60, -30, 52, -58, 20, -45, -30)
+color = Color(0.78, 0.35, 1, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -22, 20, 0, 0, 22, -20, 0)
+color = Color(0.95, 0.92, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Circle_boss")
+
+[node name="ContactArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ContactArea"]
+shape = SubResource("Circle_boss")

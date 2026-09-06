@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scenes/player.tscn" type="PackedScene" id="2_player"]
@@ -79,18 +79,45 @@ offset_bottom = 68.0
 theme_override_font_sizes/font_size = 14
 text = "XP  000 / 100"
 
-[node name="CombatLabel" type="Label" parent="HUD"]
+[node name="HealthLabel" type="Label" parent="HUD"]
 offset_left = 480.0
-offset_top = 31.0
-offset_right = 660.0
-offset_bottom = 56.0
-theme_override_font_sizes/font_size = 18
+offset_top = 22.0
+offset_right = 650.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 16
+text = "HULL  100 / 100"
+
+[node name="CombatLabel" type="Label" parent="HUD"]
+offset_left = 670.0
+offset_top = 22.0
+offset_right = 850.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 16
 text = "ENERGY  •  000"
+
+[node name="BossLabel" type="Label" parent="HUD"]
+offset_left = 500.0
+offset_top = 78.0
+offset_right = 780.0
+offset_bottom = 108.0
+theme_override_font_sizes/font_size = 20
+text = "BOSS ENCOUNTER"
+visible = false
+
+[node name="GameOverLabel" type="Label" parent="HUD"]
+offset_left = 470.0
+offset_top = 330.0
+offset_right = 810.0
+offset_bottom = 390.0
+theme_override_font_sizes/font_size = 28
+text = "RUN ENDED"
+horizontal_alignment = 1
+visible = false
 
 [node name="Hint" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 680.0
-offset_right = 650.0
+offset_right = 900.0
 offset_bottom = 710.0
 theme_override_font_sizes/font_size = 16
 text = "WASD / ARROWS  •  Move     SPACE  •  Energy     Collect green XP"
