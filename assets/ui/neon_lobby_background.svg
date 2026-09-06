@@ -1,1 +1,83 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="864" viewBox="0 0 1536 864"><defs><radialGradient id="g"><stop stop-color="#173c91"/><stop offset=".45" stop-color="#170b42"/><stop offset="1" stop-color="#01030d"/></radialGradient><linearGradient id="p" x1="0" x2="1"><stop stop-color="#37dfff"/><stop offset=".5" stop-color="#5b52ff"/><stop offset="1" stop-color="#ff43dd"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="1536" height="864" fill="url(#g)"/><circle cx="1310" cy="70" r="390" fill="#0b75d8" opacity=".3"/><circle cx="1310" cy="70" r="330" fill="#071329" stroke="#54bfff" stroke-width="5" opacity=".95"/><path d="M0 520 Q260 300 510 470 T930 390" fill="none" stroke="#263b91" stroke-width="70" opacity=".35"/><g fill="#fff" opacity=".8"><circle cx="0" cy="60" r="1"/><circle cx="137" cy="143" r="1.5"/><circle cx="274" cy="226" r="2"/><circle cx="411" cy="309" r="1"/><circle cx="548" cy="392" r="1.5"/><circle cx="685" cy="475" r="2"/><circle cx="822" cy="558" r="1"/><circle cx="959" cy="641" r="1.5"/><circle cx="1096" cy="724" r="2"/><circle cx="1233" cy="807" r="1"/><circle cx="1370" cy="130" r="1.5"/><circle cx="1470" cy="260" r="2"/><circle cx="90" cy="390" r="1"/><circle cx="230" cy="510" r="1.5"/><circle cx="370" cy="630" r="2"/><circle cx="510" cy="750" r="1"/><circle cx="650" cy="110" r="1.5"/><circle cx="790" cy="240" r="2"/><circle cx="930" cy="370" r="1"/><circle cx="1070" cy="500" r="1.5"/><circle cx="1210" cy="630" r="2"/><circle cx="1350" cy="760" r="1"/><circle cx="1450" cy="80" r="1.5"/><circle cx="40" cy="760" r="2"/><circle cx="180" cy="110" r="1"/><circle cx="320" cy="240" r="1.5"/><circle cx="460" cy="370" r="2"/><circle cx="600" cy="500" r="1"/><circle cx="740" cy="630" r="1.5"/><circle cx="880" cy="760" r="2"/><circle cx="1020" cy="110" r="1"/><circle cx="1160" cy="240" r="1.5"/><circle cx="1300" cy="370" r="2"/><circle cx="1440" cy="500" r="1"/></g><g filter="url(#glow)"><path d="M500 590 L700 500 L980 585 L810 640 L690 615 Z" fill="#101c43" stroke="#49dfff" stroke-width="6"/><path d="M700 500 L790 435 L900 555 L810 585 Z" fill="#1d2855" stroke="#a866ff" stroke-width="4"/><path d="M625 590 L530 650 L700 620" fill="#182858" stroke="#39dfff" stroke-width="4"/><path d="M840 585 L1000 650 L900 600" fill="#182858" stroke="#ff4fd8" stroke-width="4"/><path d="M650 615 L550 760 M740 620 L680 785 M830 615 L900 755" stroke="#35dfff" stroke-width="12" opacity=".9"/></g><g filter="url(#glow)"><text x="770" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="92" font-weight="900" font-style="italic" fill="url(#p)">NEON</text><text x="770" y="285" text-anchor="middle" font-family="Arial,sans-serif" font-size="54" font-weight="900" fill="#eaf8ff">SPACE SURVIVAL</text><text x="770" y="325" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" letter-spacing="8" fill="#b9eaff">SURVIVE • UPGRADE • EXPLORE</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="864" viewBox="0 0 1536 864">
+<defs>
+ <radialGradient id="space" cx="55%" cy="48%" r="75%"><stop stop-color="#102b73"/><stop offset=".34" stop-color="#090b35"/><stop offset=".72" stop-color="#040719"/><stop offset="1" stop-color="#01020a"/></radialGradient>
+ <radialGradient id="nebula" cx="50%" cy="50%"><stop stop-color="#5b2cff" stop-opacity=".75"/><stop offset=".45" stop-color="#24127a" stop-opacity=".35"/><stop offset="1" stop-color="#05051a" stop-opacity="0"/></radialGradient>
+ <linearGradient id="cyan" x1="0" x2="1"><stop stop-color="#27eaff"/><stop offset="1" stop-color="#2680ff"/></linearGradient>
+ <linearGradient id="pink" x1="0" x2="1"><stop stop-color="#ff39d7"/><stop offset="1" stop-color="#7d5cff"/></linearGradient>
+ <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061a3a" stop-opacity=".88"/><stop offset="1" stop-color="#030b20" stop-opacity=".72"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="25"/></filter>
+ <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#1b5fa0" stroke-opacity=".12"/></pattern>
+</defs>
+<!-- deep space -->
+<rect width="1536" height="864" fill="url(#space)"/>
+<ellipse cx="680" cy="390" rx="510" ry="300" fill="url(#nebula)" filter="url(#soft)"/>
+<ellipse cx="400" cy="610" rx="380" ry="190" fill="#5b16b8" opacity=".16" filter="url(#soft)"/>
+<rect width="1536" height="864" fill="url(#grid)"/>
+<!-- stars -->
+<g fill="#d9f8ff"><circle cx="90" cy="82" r="2"/><circle cx="210" cy="150" r="1.5"/><circle cx="370" cy="82" r="1"/><circle cx="490" cy="155" r="2"/><circle cx="640" cy="72" r="1.5"/><circle cx="820" cy="112" r="1"/><circle cx="1040" cy="82" r="2"/><circle cx="1130" cy="190" r="1"/><circle cx="1280" cy="120" r="1.5"/><circle cx="1480" cy="210" r="2"/><circle cx="55" cy="330" r="1"/><circle cx="180" cy="470" r="2"/><circle cx="360" cy="350" r="1"/><circle cx="470" cy="520" r="1.5"/><circle cx="1050" cy="470" r="1.5"/><circle cx="1170" cy="560" r="1"/><circle cx="1390" cy="480" r="2"/><circle cx="1490" cy="650" r="1"/><circle cx="120" cy="760" r="1.5"/><circle cx="420" cy="790" r="2"/><circle cx="1080" cy="780" r="1.5"/></g>
+<!-- large planet upper right -->
+<circle cx="1260" cy="40" r="370" fill="#061326" stroke="#1760a8" stroke-width="32" opacity=".96"/>
+<circle cx="1260" cy="40" r="330" fill="#071a34" stroke="#42d7ff" stroke-width="4" opacity=".95"/>
+<path d="M980 30 Q1250 120 1530 20" fill="none" stroke="#2a78d9" stroke-width="18" opacity=".24"/>
+<path d="M1010 115 Q1260 185 1500 100" fill="none" stroke="#6d8fff" stroke-width="8" opacity=".12"/>
+<!-- left space station -->
+<g opacity=".9" filter="url(#glow)">
+ <path d="M-20 400 L310 300 L470 350 L250 455 Z" fill="#08172e" stroke="#3159a9" stroke-width="3"/>
+ <path d="M30 445 L340 355 L420 390 L115 490 Z" fill="#0a1b37" stroke="#25cfff" stroke-width="3"/>
+ <path d="M90 380 L255 335 M120 430 L290 382 M185 470 L345 415" stroke="#ff39d7" stroke-width="5" opacity=".75"/>
+ <circle cx="315" cy="370" r="12" fill="#24eaff"/>
+</g>
+<!-- floating asteroids -->
+<g fill="#090d20" stroke="#304c91" stroke-width="3">
+ <path d="M470 270l28-34 48 8 18 42-30 34-55-7z"/><path d="M1030 420l24-31 40 7 17 35-25 32-42-8z"/><path d="M1160 690l30-30 43 11 13 40-35 25-43-15z"/><path d="M320 650l22-27 36 5 16 31-23 30-39-8z"/>
+</g>
+<!-- central title emblem -->
+<g filter="url(#glow)"><circle cx="770" cy="250" r="115" fill="none" stroke="url(#pink)" stroke-width="5" stroke-dasharray="90 24 30 18" opacity=".85"/><circle cx="770" cy="250" r="92" fill="#07112d" opacity=".35"/></g>
+<g font-family="Arial,sans-serif" text-anchor="middle" filter="url(#glow)">
+ <text x="770" y="235" font-size="94" font-weight="900" font-style="italic" fill="url(#pink)">NEON</text>
+ <text x="770" y="305" font-size="53" font-weight="900" fill="#eaf8ff" stroke="#438dff" stroke-width="1">SPACE SURVIVAL</text>
+ <text x="770" y="345" font-size="18" letter-spacing="9" fill="#bceeff">SURVIVE • UPGRADE • EXPLORE</text>
+</g>
+<!-- player spaceship -->
+<g filter="url(#glow)">
+ <path d="M510 600 L690 490 L915 525 L1015 610 L865 650 L700 630 Z" fill="#0a1739" stroke="#31ddff" stroke-width="6"/>
+ <path d="M690 490 L785 425 L885 535 L810 590 Z" fill="#142653" stroke="#9a5cff" stroke-width="5"/>
+ <path d="M585 580 L490 640 L690 615" fill="#10234b" stroke="#31ddff" stroke-width="5"/>
+ <path d="M865 570 L1035 640 L900 585" fill="#10234b" stroke="#ff45d8" stroke-width="5"/>
+ <path d="M655 610 L565 800 M755 625 L690 810 M840 620 L930 790" stroke="#36eaff" stroke-width="15" opacity=".88"/>
+ <ellipse cx="790" cy="545" rx="45" ry="18" fill="#3eeaff" opacity=".45"/>
+ <path d="M780 530 L820 535" stroke="#fff" stroke-width="4"/>
+</g>
+<!-- left navigation holographic panels -->
+<g font-family="Arial,sans-serif" fill="#dff8ff">
+ <g><path d="M24 155h310l24 18-24 66H24z" fill="url(#panel)" stroke="#1f8cff" stroke-width="3"/><path d="M30 161h295l16 12-16 58H30z" fill="#075eff" opacity=".12"/><text x="62" y="215" font-size="30" font-weight="700">▶  PLAY</text></g>
+ <g fill="url(#panel)" stroke="#1c79c8" stroke-width="2">
+  <path d="M24 248h310l18 16-18 54H24z"/><path d="M24 320h310l18 16-18 54H24z"/><path d="M24 392h310l18 16-18 54H24z"/><path d="M24 464h310l18 16-18 54H24z"/><path d="M24 536h310l18 16-18 54H24z"/><path d="M24 608h310l18 16-18 54H24z"/>
+ </g>
+ <g font-size="23" font-weight="600">
+  <text x="62" y="286">🚀  SHIP</text><text x="62" y="358">⚙  UPGRADES</text><text x="62" y="430">◈  DRONES</text><text x="62" y="502">▣  INVENTORY</text><text x="62" y="574">◎  MISSIONS</text><text x="62" y="646">⚙  SETTINGS</text>
+ </g>
+ <g fill="#ff3b70"><circle cx="285" cy="263" r="5"/><circle cx="285" cy="407" r="5"/><circle cx="285" cy="551" r="5"/></g>
+</g>
+<!-- top player profile -->
+<path d="M28 28h380l22 20v62l-22 20H28z" fill="url(#panel)" stroke="#28cfff" stroke-width="2"/>
+<circle cx="78" cy="78" r="34" fill="#091a3b" stroke="#28dfff" stroke-width="3"/><path d="M61 88l8-29 18-10 12 20-9 25z" fill="#2b8cff" opacity=".8"/>
+<g font-family="Arial,sans-serif" fill="#e7faff"><text x="125" y="58" font-size="24" font-weight="700">NEON PILOT</text><text x="125" y="86" font-size="21">LV 03</text><text x="245" y="86" font-size="15" fill="#35dfff">XP 130 / 200</text></g><rect x="125" y="98" width="250" height="10" rx="5" fill="#102a55"/><rect x="125" y="98" width="162" height="10" rx="5" fill="#27dfff"/>
+<!-- top resources -->
+<g font-family="Arial,sans-serif" fill="#eaf8ff" font-size="22"><path d="M550 28h175l18 18v45l-18 18H550l-18-18V46z" fill="url(#panel)" stroke="#28cfff" stroke-width="2"/><text x="575" y="73">🪙 4,850   +</text><path d="M745 28h175l18 18v45l-18 18H745l-18-18V46z" fill="url(#panel)" stroke="#28cfff" stroke-width="2"/><text x="770" y="73">💎 320   +</text><path d="M940 28h175l18 18v45l-18 18H940l-18-18V46z" fill="url(#panel)" stroke="#28cfff" stroke-width="2"/><text x="965" y="73">⚡ 10/10  +</text></g>
+<!-- top right icons -->
+<g font-size="35" fill="#dff8ff" text-anchor="middle"><path d="M1285 28h70l12 12v56l-12 12h-70l-12-12V40z" fill="url(#panel)" stroke="#2a9de8"/><text x="1320" y="72">♜</text><path d="M1375 28h70l12 12v56l-12 12h-70l-12-12V40z" fill="url(#panel)" stroke="#2a9de8"/><text x="1410" y="72">✉</text><path d="M1465 28h52v80h-52z" fill="url(#panel)" stroke="#2a9de8"/><text x="1491" y="75">⚙</text></g>
+<!-- right mission panel -->
+<path d="M1148 130h350l20 20v282l-20 20h-350l-20-20V150z" fill="url(#panel)" stroke="#238fe0" stroke-width="2"/>
+<g font-family="Arial,sans-serif" fill="#eaf8ff"><text x="1175" y="177" font-size="23" font-weight="700">◎  DAILY MISSIONS</text><text x="1470" y="177" font-size="28">›</text>
+ <g font-size="15"><circle cx="1175" cy="225" r="17" fill="none" stroke="#1ebeff" stroke-width="3"/><text x="1210" y="220">Kill 50 Enemies</text><text x="1210" y="241" fill="#73a5d0">12/50</text><text x="1450" y="230" fill="#c8f5ff">💎 x50</text><rect x="1210" y="252" width="190" height="6" rx="3" fill="#0c315e"/><rect x="1210" y="252" width="46" height="6" rx="3" fill="#28ddff"/>
+ <circle cx="1175" cy="305" r="17" fill="none" stroke="#1ebeff" stroke-width="3"/><text x="1210" y="300">Collect 20 Crystals</text><text x="1210" y="321" fill="#73a5d0">8/20</text><text x="1450" y="310" fill="#c8f5ff">🪙 x100</text><rect x="1210" y="332" width="190" height="6" rx="3" fill="#0c315e"/><rect x="1210" y="332" width="76" height="6" rx="3" fill="#28ddff"/>
+ <circle cx="1175" cy="385" r="17" fill="none" stroke="#1ebeff" stroke-width="3"/><text x="1210" y="380">Survive 5 Minutes</text><text x="1210" y="401" fill="#73a5d0">2/5</text><text x="1450" y="390" fill="#c8f5ff">⚡ x30</text><rect x="1210" y="412" width="190" height="6" rx="3" fill="#0c315e"/><rect x="1210" y="412" width="76" height="6" rx="3" fill="#28ddff"/></g></g>
+<!-- reward cards -->
+<path d="M1148 455h350l20 20v120l-20 18h-350l-20-18V475z" fill="#240b44" stroke="#b93cff" stroke-width="2"/><text x="1260" y="510" font-family="Arial" font-size="23" font-weight="700" fill="#fff">▶  WATCH AD</text><text x="1260" y="540" font-family="Arial" font-size="20" fill="#f2baff">GET REWARD</text><path d="M1180 500l48-20 48 28-20 54-55-2z" fill="#7d24e8" opacity=".9" stroke="#df63ff" stroke-width="3"/>
+<path d="M1148 625h350l20 20v65l-20 18h-350l-20-18v-65z" fill="#062b36" stroke="#16e5d3" stroke-width="2"/><text x="1178" y="668" font-family="Arial" font-size="22" font-weight="700" fill="#20ffe5">🎁  FREE REWARD</text><text x="1205" y="701" font-family="Arial" font-size="16" fill="#b8ffff">◷ 23:59:42</text>
+<!-- bottom play -->
+<path d="M535 668l28-30h410l55 58-55 60H563l-28-30z" fill="#061a39" stroke="#1adfff" stroke-width="5"/><path d="M557 675l18-20h375l35 41-35 40H575l-18-20z" fill="none" stroke="#2d7dff" stroke-width="3"/><text x="770" y="710" text-anchor="middle" font-family="Arial" font-size="44" font-weight="800" fill="#eafcff">▶ PLAY</text>
+<!-- footer --> <text x="52" y="825" font-family="Arial" font-size="15" letter-spacing="4" fill="#6d9bc4">SMALL SHIP  •  BIG DREAMS</text>
+</svg>
