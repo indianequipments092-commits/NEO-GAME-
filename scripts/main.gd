@@ -1,6 +1,6 @@
 extends Node2D
 
-# NEON SPACE SURVIVAL — Phase 10 QA / optimization pass.
+# NEON SPACE SURVIVAL — final integration pass.
 const XP_ORB := preload("res://scenes/xp_orb.tscn")
 const ENEMY := preload("res://scenes/enemy.tscn")
 const BOSS := preload("res://scenes/boss.tscn")
@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 		xp_spawn_time = 0.0
 		_spawn_xp_orb()
 
-	if enemy_spawn_time >= enemy_spawn_interval and survival_time < 60.0:
+	if enemy_spawn_time >= enemy_spawn_interval:
 		enemy_spawn_time = 0.0
 		_spawn_enemy()
 
@@ -90,6 +90,7 @@ func _spawn_boss() -> void:
 	var boss := BOSS.instantiate()
 	boss.position = Vector2(640, 100)
 	add_child(boss)
+	boss_label.text = "BOSS  500 / 500"
 	boss_label.visible = true
 
 func _update_boss_juice() -> void:
@@ -107,11 +108,14 @@ func claim_run_reward() -> void:
 	credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
 func claim_rewarded_ad_placeholder() -> void:
-	## Safe integration hook: a future ad provider must call this only after
-	## its verified completion callback and required consent/age checks.
+	## Safe integration hook only; no live ad SDK is bundled in this project.
 	var reward := economy.claim_ad_reward_placeholder()
 	if reward > 0:
 		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
+
+func restart_run() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 func add_meta_core() -> void:
 	meta_cores += 1
