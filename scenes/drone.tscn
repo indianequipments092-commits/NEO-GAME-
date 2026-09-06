@@ -1,0 +1,11 @@
+[gd_scene load_steps=1 format=3]
+
+[node name="Drone" type="Node2D"]
+
+[node name="Glow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -10, 8, 0, 0, 10, -8, 0)
+color = Color(0.95, 0.45, 1, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -4, 4, 0, 0, 4, -4, 0)
+color = Color(1, 0.9, 1, 1)
