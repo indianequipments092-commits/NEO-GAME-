@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-## Boss encounter with a real health/damage loop for Phase 5+.
+## Boss encounter with Phase 12 cinematic HUD integration.
 @export var move_speed: float = 48.0
 @export var contact_damage: int = 18
 @export var max_health: float = 500.0
@@ -33,16 +33,18 @@ func take_damage(amount: float) -> void:
 	if health <= 0.0:
 		return
 	health = maxf(0.0, health - amount)
-	var label := get_tree().current_scene.get_node_or_null("HUD/BossLabel")
+	var label := get_tree().current_scene.get_node_or_null("HUD/BossPanel/BossLabel")
+	var bar := get_tree().current_scene.get_node_or_null("HUD/BossPanel/BossBar")
 	if label:
 		label.text = "BOSS  %03d / %03d" % [int(ceil(health)), int(max_health)]
+	if bar:
+		bar.value = (health / max_health) * 100.0
 	if health <= 0.0:
 		var scene := get_tree().current_scene
 		if scene.has_method("spawn_enemy_xp"):
 			scene.spawn_enemy_xp(global_position, xp_reward)
-		var boss_label := scene.get_node_or_null("HUD/BossLabel")
-		if boss_label:
-			boss_label.text = "BOSS DEFEATED"
+		if label:
+			label.text = "BOSS DEFEATED"
 		queue_free()
 
 func _on_contact_body_entered(body: Node2D) -> void:
