@@ -1,6 +1,6 @@
 extends Node2D
 
-# NEON SPACE SURVIVAL — final integration pass.
+# NEON SPACE SURVIVAL — Phase 12 UI integration.
 const XP_ORB := preload("res://scenes/xp_orb.tscn")
 const ENEMY := preload("res://scenes/enemy.tscn")
 const BOSS := preload("res://scenes/boss.tscn")
@@ -16,15 +16,18 @@ var meta_cores := 0
 var juice_time := 0.0
 var run_reward_claimed := false
 
-@onready var timer_label: Label = $HUD/TimerLabel
+@onready var timer_label: Label = $HUD/TopLeft/TimerLabel
 @onready var player: CharacterBody2D = $Player
-@onready var boss_label: Label = $HUD/BossLabel
+@onready var boss_label: Label = $HUD/BossPanel/BossLabel
+@onready var boss_bar: ProgressBar = $HUD/BossPanel/BossBar
+@onready var xp_bar: ProgressBar = $HUD/XPBar
 @onready var economy: Node = $Economy
-@onready var credits_label: Label = $HUD/CreditsLabel
+@onready var credits_label: Label = $HUD/CreditsPanel/CreditsLabel
 
 func _ready() -> void:
 	timer_label.text = "SURVIVAL  00:00"
 	_update_progression_hud()
+	_update_health_hud()
 	_update_economy_hud()
 
 func _process(delta: float) -> void:
@@ -86,11 +89,21 @@ func _spawn_boss() -> void:
 	boss.position = Vector2(640, 100)
 	add_child(boss)
 	boss_label.text = "BOSS  500 / 500"
-	boss_label.visible = true
+	boss_bar.value = 100.0
+	$HUD/BossPanel.visible = true
 
 func _update_boss_juice() -> void:
 	if not boss_spawned:
 		return
+	var boss := get_node_or_null("Boss")
+	if boss == null:
+		for child in get_children():
+			if child is CharacterBody2D and child.has_method("take_damage") and child != player:
+				boss = child
+				break
+	if boss and "health" in boss and "max_health" in boss:
+			boss_bar.value = (float(boss.health) / float(boss.max_health)) * 100.0
+			boss_label.text = "BOSS  %03d / %03d" % [int(ceil(boss.health)), int(boss.max_health)]
 	var pulse := 0.85 + sin(juice_time * 5.0) * 0.15
 	boss_label.modulate.a = pulse
 	boss_label.scale = Vector2.ONE * (1.0 + sin(juice_time * 5.0) * 0.03)
@@ -127,10 +140,17 @@ func _random_edge_position() -> Vector2:
 		_: return Vector2(1220.0, randf_range(60.0, 660.0))
 
 func _update_progression_hud() -> void:
-	var level_label := $HUD/LevelLabel
-	var xp_label := $HUD/XPLabel
+	var level_label := $HUD/TopLeft/LevelLabel
+	var xp_label := $HUD/TopLeft/XPLabel
 	level_label.text = "LV  %02d" % player.level
 	xp_label.text = "XP  %03d / %03d" % [player.xp, player.xp_to_next_level]
+	xp_bar.value = (float(player.xp) / float(player.xp_to_next_level)) * 100.0
+
+func _update_health_hud() -> void:
+	var health_label := $HUD/StatusPanel/HealthLabel
+	var health_bar := $HUD/StatusPanel/HealthBar
+	health_label.text = "HULL  %03d / %03d" % [player.health, player.max_health]
+	health_bar.value = (float(player.health) / float(player.max_health)) * 100.0
 
 func _update_economy_hud() -> void:
 	if is_instance_valid(economy) and is_instance_valid(credits_label):
