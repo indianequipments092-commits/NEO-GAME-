@@ -72,7 +72,6 @@ func _build_game_over_actions() -> void:
 		sub.add_theme_font_size_override("font_size", 14)
 		sub.add_theme_color_override("font_color", Color("ff7088"))
 		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if sub.get_parent() == null:
 		panel.add_child(sub)
 	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
 
@@ -85,11 +84,8 @@ func _build_game_over_actions() -> void:
 		restart.focus_mode = Control.FOCUS_ALL
 		restart.position = Vector2(45, 160)
 		restart.size = Vector2(155, 55)
-		restart.add_theme_font_size_override("font_size", 16)
 		restart.text = "RESTART RUN"
-		restart.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
-		restart.add_theme_stylebox_override("pressed", _game_over_button_style(Color("39d9ff")))
-		restart.add_theme_stylebox_override("hover", _game_over_button_style(Color("39d9ff")))
+		restart.add_theme_font_size_override("font_size", 16)
 	if restart and not restart.pressed.is_connected(restart_run):
 		restart.pressed.connect(restart_run)
 
@@ -108,9 +104,6 @@ func _build_game_over_actions() -> void:
 	exit.text = "EXIT"
 	exit.add_theme_font_size_override("font_size", 16)
 	exit.add_theme_color_override("font_color", Color("dff8ff"))
-	exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
-	exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
-	exit.add_theme_stylebox_override("hover", _game_over_button_style(Color("39d9ff")))
 	if not exit.pressed.is_connected(exit_to_lobby):
 		exit.pressed.connect(exit_to_lobby)
 
@@ -213,20 +206,14 @@ func claim_rewarded_ad_placeholder() -> void:
 		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
 func restart_run() -> void:
-	get_tree().paused = false
 	game_over = false
+	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 func exit_to_lobby() -> void:
-	get_tree().paused = false
 	game_over = false
-	if mobile_controls:
-		mobile_controls.visible = false
-	var menu := get_node_or_null("Menu")
-	if menu and menu.has_method("_return_to_main"):
-		menu._return_to_main()
-	else:
-		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func add_meta_core() -> void:
 	meta_cores += 1
