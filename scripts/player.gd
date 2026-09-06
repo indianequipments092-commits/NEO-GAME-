@@ -12,6 +12,9 @@ const DRONE := preload("res://scenes/drone.tscn")
 @export var contact_invulnerability: float = 0.8
 @export var special_cooldown_max: float = 10.0
 @export var special_duration: float = 1.8
+@export var dash_speed: float = 900.0
+@export var dash_duration: float = 0.16
+@export var dash_cooldown_max: float = 1.2
 
 var last_direction := Vector2.UP
 var fire_cooldown := 0.0
@@ -28,6 +31,8 @@ var drone_module_level := 0
 var drone_instance: Node2D
 var special_cooldown := 0.0
 var special_time_left := 0.0
+var dash_time_left := 0.0
+var dash_cooldown := 0.0
 var dead := false
 
 func _ready() -> void:
@@ -43,15 +48,20 @@ func _physics_process(delta: float) -> void:
 		queue_redraw()
 		return
 	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var target_velocity := input_direction * (move_speed + engine_module_level * 25.0)
-	var rate := acceleration if input_direction != Vector2.ZERO else friction
-	velocity = velocity.move_toward(target_velocity, rate * delta)
 	if input_direction != Vector2.ZERO:
 		last_direction = input_direction.normalized()
+	var target_velocity := input_direction * (move_speed + engine_module_level * 25.0)
+	var rate := acceleration if input_direction != Vector2.ZERO else friction
+	if dash_time_left > 0.0:
+		dash_time_left = maxf(0.0, dash_time_left - delta)
+		velocity = last_direction * dash_speed
+	else:
+		velocity = velocity.move_toward(target_velocity, rate * delta)
 	move_and_slide()
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
 	damage_cooldown = maxf(0.0, damage_cooldown - delta)
 	special_cooldown = maxf(0.0, special_cooldown - delta)
+	dash_cooldown = maxf(0.0, dash_cooldown - delta)
 	if special_time_left > 0.0:
 		special_time_left = maxf(0.0, special_time_left - delta)
 	_update_special_hud()
@@ -85,6 +95,19 @@ func activate_special() -> bool:
 		scene.add_child(projectile)
 		projectiles_fired += 1
 	_update_special_hud()
+	queue_redraw()
+	return true
+
+func perform_dash() -> bool:
+	if dead or dash_cooldown > 0.0:
+		return false
+	var direction := last_direction
+	if direction == Vector2.ZERO:
+		direction = Vector2.UP
+	last_direction = direction.normalized()
+	dash_cooldown = dash_cooldown_max
+	dash_time_left = dash_duration
+	velocity = last_direction * dash_speed
 	queue_redraw()
 	return true
 
