@@ -1,10 +1,11 @@
-; NEON SPACE SURVIVAL — Godot 4 project configuration
-; Phase 3: Combat foundation
-
+; NEON SPACE SURVIVAL — Godot 4 release configuration
 config_version=5
 
 [application]
 config/name="NEON SPACE SURVIVAL"
+config/description="A fast-paced neon space survival roguelite."
+config/version="1.0.0"
+config/icon="res://icon.svg"
 run/main_scene="res://scenes/main.tscn"
 
 [display]
@@ -12,6 +13,7 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/window_width_override=1280
 window/size/window_height_override=720
+window/stretch/mode="canvas_items"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
