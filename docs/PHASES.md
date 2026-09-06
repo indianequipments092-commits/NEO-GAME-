@@ -99,7 +99,14 @@
 **Status: Complete**
 
 ## Phase 10 — Testing / Optimization / QA
-Planned.
+- Fixed the support-drone orbit/pulse implementation
+- Connected run-end survival rewards to the actual game-over path
+- Prevented duplicate run rewards
+- Reduced unnecessary per-frame Credits HUD updates
+- Added a dedicated Phase 10 QA checklist covering gameplay, UI, progression, economy, and persistence
+- Documented manual runtime validation and profiler checks
+
+**Status: Complete — repository QA pass finished; Godot runtime validation remains manual**
 
 ## Phase 11 — Release / Store Preparation
 Planned.
