@@ -5,6 +5,8 @@ on:
   push:
     branches: [main]
 
+# Final APK build only; game features are already complete.
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
