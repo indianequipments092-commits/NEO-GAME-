@@ -1,0 +1,48 @@
+[gd_scene load_steps=1 format=3]
+
+[node name="MobileControls" type="CanvasLayer"]
+layer = 20
+
+[node name="Controls" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Up" type="Button" parent="Controls"]
+offset_left = 104.0
+offset_top = 500.0
+offset_right = 184.0
+offset_bottom = 580.0
+text = "▲"
+
+[node name="Down" type="Button" parent="Controls"]
+offset_left = 104.0
+offset_top = 590.0
+offset_right = 184.0
+offset_bottom = 670.0
+text = "▼"
+
+[node name="Left" type="Button" parent="Controls"]
+offset_left = 14.0
+offset_top = 590.0
+offset_right = 94.0
+offset_bottom = 670.0
+text = "◀"
+
+[node name="Right" type="Button" parent="Controls"]
+offset_left = 194.0
+offset_top = 590.0
+offset_right = 274.0
+offset_bottom = 670.0
+text = "▶"
+
+[node name="Fire" type="Button" parent="Controls"]
+offset_left = 1080.0
+offset_top = 540.0
+offset_right = 1250.0
+offset_bottom = 690.0
+text = "FIRE"
