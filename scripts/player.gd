@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-## Core player controller with Phase 3 combat, Phase 4 progression, and Phase 6 modules.
+## Core player controller with combat, progression, modules and mobile-compatible input actions.
 const ENERGY_PROJECTILE := preload("res://scenes/energy_projectile.tscn")
 const DRONE := preload("res://scenes/drone.tscn")
 
@@ -63,6 +63,7 @@ func collect_xp(amount: int) -> void:
 		upgrade_points += 1
 		xp_to_next_level = 100 + (level - 1) * 50
 	_update_progression_hud()
+	_update_module_hud()
 
 func take_contact_damage(amount: int) -> void:
 	if damage_cooldown > 0.0 or health <= 0:
@@ -78,6 +79,9 @@ func take_contact_damage(amount: int) -> void:
 		if game_over:
 			game_over.text = "RUN ENDED"
 			game_over.visible = true
+		var restart := scene.get_node_or_null("HUD/RestartButton")
+		if restart:
+			restart.visible = true
 		get_tree().paused = true
 
 func install_module(module_name: String) -> bool:
@@ -93,7 +97,8 @@ func install_module(module_name: String) -> bool:
 			if not is_instance_valid(drone_instance):
 				drone_instance = DRONE.instantiate()
 				get_tree().current_scene.add_child(drone_instance)
-		_: return false
+		_:
+			return false
 	upgrade_points -= 1
 	_update_module_hud()
 	return true
