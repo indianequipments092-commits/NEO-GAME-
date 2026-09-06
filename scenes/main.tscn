@@ -63,10 +63,26 @@ offset_bottom = 56.0
 theme_override_font_sizes/font_size = 20
 text = "SURVIVAL  00:00"
 
-[node name="CombatLabel" type="Label" parent="HUD"]
+[node name="LevelLabel" type="Label" parent="HUD"]
 offset_left = 270.0
+offset_top = 22.0
+offset_right = 360.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 18
+text = "LV  01"
+
+[node name="XPLabel" type="Label" parent="HUD"]
+offset_left = 270.0
+offset_top = 45.0
+offset_right = 460.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 14
+text = "XP  000 / 100"
+
+[node name="CombatLabel" type="Label" parent="HUD"]
+offset_left = 480.0
 offset_top = 31.0
-offset_right = 450.0
+offset_right = 660.0
 offset_bottom = 56.0
 theme_override_font_sizes/font_size = 18
 text = "ENERGY  •  000"
@@ -77,4 +93,4 @@ offset_top = 680.0
 offset_right = 650.0
 offset_bottom = 710.0
 theme_override_font_sizes/font_size = 16
-text = "WASD / ARROWS  •  Move     SPACE  •  Energy"
+text = "WASD / ARROWS  •  Move     SPACE  •  Energy     Collect green XP"
