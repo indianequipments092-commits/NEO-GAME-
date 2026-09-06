@@ -67,7 +67,14 @@
 **Status: Complete**
 
 ## Phase 7 — Polish / VFX / Audio / Game Juice
-Planned.
+- Procedural animated starfield background
+- Lightweight gameplay juice controller
+- Pulsing boss encounter indicator
+- HUD feedback/tween hook for future events
+- Polish-ready structure for particles and audio integration
+- Visual/gameplay feedback foundation ready for Phase 8
+
+**Status: Complete**
 
 ## Phase 8 — UI / Menus / Settings
 Planned.
