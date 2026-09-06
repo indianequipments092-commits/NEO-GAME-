@@ -25,6 +25,11 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
+	var lobby := get_tree().current_scene.get_node_or_null("Menu/UI/MainPanel")
+	if lobby:
+		visible = not lobby.visible
+	if not visible:
+		return
 	if special_cooldown > 0.0 and not get_tree().paused:
 		special_cooldown = maxf(0.0, special_cooldown - delta)
 	if special_active > 0.0:
@@ -107,16 +112,16 @@ func _close_three_dot_menu() -> void:
 	queue_redraw()
 
 func _handle_menu_touch(pos: Vector2, size: Vector2) -> void:
-	var x := size.x - 250.0
-	var y := 105.0
-	if Rect2(x, y, 230, 56).has_point(pos):
+	var x := size.x - 260.0
+	var y := 132.0
+	if Rect2(x, y, 245, 52).has_point(pos):
 		_close_three_dot_menu()
-	elif Rect2(x, y + 64, 230, 56).has_point(pos):
+	elif Rect2(x, y + 64, 245, 52).has_point(pos):
 		get_tree().paused = false
 		get_tree().reload_current_scene()
-	elif Rect2(x, y + 128, 230, 56).has_point(pos):
+	elif Rect2(x, y + 128, 245, 52).has_point(pos):
 		_reload_to_lobby()
-	elif not Rect2(x, y, 230, 184).has_point(pos):
+	elif not Rect2(x, y, 245, 180).has_point(pos):
 		_close_three_dot_menu()
 
 func _reload_to_lobby() -> void:
@@ -144,6 +149,8 @@ func _in_circle(p: Vector2, c: Vector2, radius: float) -> bool:
 	return p.distance_to(c) <= radius
 
 func _draw() -> void:
+	if not visible:
+		return
 	var size := get_viewport_rect().size
 	if size.x <= 0 or size.y <= 0: return
 	var center := joystick_center if joystick_center != Vector2.ZERO else Vector2(130, size.y - 125)
@@ -162,12 +169,12 @@ func _draw() -> void:
 	if special_cooldown > 0.0:
 		var font := ThemeDB.fallback_font
 		var t := "%d" % int(ceil(special_cooldown))
-		draw_string(font, Vector2(size.x - 235.0 - 7.0, size.y - 175.0 + 5.0), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, TEXT)
+		draw_string(font, Vector2(size.x - 242.0, size.y - 168.0), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, TEXT)
 	if menu_open:
 		_draw_pause_menu(size)
 
 func _draw_pause_menu(size: Vector2) -> void:
-	var panel_rect := Rect2(size.x - 260.0, 92.0, 245.0, 205.0)
+	var panel_rect := Rect2(size.x - 270.0, 112.0, 255.0, 205.0)
 	draw_style_box(_style_box(PANEL, CYAN, 0.97), panel_rect)
 	var font := ThemeDB.fallback_font
 	draw_string(font, Vector2(panel_rect.position.x + 22, panel_rect.position.y + 30), "GAME MENU", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, CYAN)
@@ -176,7 +183,7 @@ func _draw_pause_menu(size: Vector2) -> void:
 	_draw_menu_button(panel_rect.position + Vector2(8, 168), "⇥  EXIT", RED)
 
 func _draw_menu_button(pos: Vector2, text: String, accent: Color) -> void:
-	draw_style_box(_style_box(Color(accent.r, accent.g, accent.b, 0.10), accent, 0.85), Rect2(pos, Vector2(229, 52)))
+	draw_style_box(_style_box(Color(accent.r, accent.g, accent.b, 0.10), accent, 0.85), Rect2(pos, Vector2(239, 52)))
 	var font := ThemeDB.fallback_font
 	draw_string(font, pos + Vector2(16, 33), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, TEXT)
 
