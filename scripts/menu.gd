@@ -223,24 +223,19 @@ func _build_pause_panel() -> void:
 	menu.pressed.connect(_return_to_main)
 
 func _build_settings_panel() -> void:
-	var dim := ColorRect.new()
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.0, 0.01, 0.05, 0.82)
-	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	settings_panel.add_child(dim)
 	var card := Panel.new()
-	card.position = Vector2(365, 70)
-	card.size = Vector2(550, 580)
+	card.position = Vector2(360, 80)
+	card.size = Vector2(560, 560)
 	card.add_theme_stylebox_override("panel", _panel_style(C_PURPLE, 0.98))
 	settings_panel.add_child(card)
-	_make_label(card, "SETTINGS", Vector2(25, 25), Vector2(500, 45), 30, C_TEXT).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var groups := ["GENERAL", "GRAPHICS", "AUDIO", "CONTROLS", "LANGUAGE"]
-	for i in groups.size():
-		_make_label(card, groups[i], Vector2(45, 95 + i * 72), Vector2(130, 32), 14, C_CYAN)
+	_make_label(card, "SETTINGS", Vector2(20, 25), Vector2(520, 48), 30, C_TEXT).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var labels := ["MUSIC", "SFX", "GRAPHICS", "JOYSTICK SENSITIVITY"]
+	for i in labels.size():
+		_make_label(card, labels[i], Vector2(35, 95 + i * 72), Vector2(140, 30), 15, C_CYAN)
 		var bar := ProgressBar.new()
 		bar.position = Vector2(180, 95 + i * 72)
 		bar.size = Vector2(260, 28)
-		bar.value = [100, 75, 80, 65, 100][i]
+		bar.value = [100, 75, 80, 65][i]
 		bar.show_percentage = false
 		bar.add_theme_stylebox_override("background", _button_style(C_BLUE))
 		bar.add_theme_stylebox_override("fill", _button_style(C_CYAN, true))
@@ -303,4 +298,5 @@ func _return_to_main() -> void:
 func _set_mobile_visible(value: bool) -> void:
 	var mobile := get_parent().get_node_or_null("MobileControls")
 	if mobile:
-		mobile.visible = value and DisplayServer.is_touchscreen_available()
+		# Always show gameplay touch controls when requested; Android is the primary target.
+		mobile.visible = value
