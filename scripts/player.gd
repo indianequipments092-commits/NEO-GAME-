@@ -1,7 +1,8 @@
 extends CharacterBody2D
 
-## Core player controller with Phase 3 combat and Phase 4 progression.
+## Core player controller with Phase 3 combat, Phase 4 progression, and Phase 6 modules.
 const ENERGY_PROJECTILE := preload("res://scenes/energy_projectile.tscn")
+const DRONE := preload("res://scenes/drone.tscn")
 
 @export var move_speed: float = 360.0
 @export var acceleration: float = 1800.0
@@ -19,14 +20,19 @@ var xp_to_next_level := 100
 var upgrade_points := 0
 var health := 100
 var damage_cooldown := 0.0
+var engine_module_level := 0
+var core_module_level := 0
+var drone_module_level := 0
+var drone_instance: Node2D
 
 func _ready() -> void:
 	health = max_health
 	_update_health_hud()
+	_update_module_hud()
 
 func _physics_process(delta: float) -> void:
 	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var target_velocity := input_direction * move_speed
+	var target_velocity := input_direction * (move_speed + engine_module_level * 25.0)
 	var rate := acceleration if input_direction != Vector2.ZERO else friction
 	velocity = velocity.move_toward(target_velocity, rate * delta)
 
@@ -34,14 +40,13 @@ func _physics_process(delta: float) -> void:
 		last_direction = input_direction.normalized()
 
 	move_and_slide()
-
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
 	damage_cooldown = maxf(0.0, damage_cooldown - delta)
 	if Input.is_action_pressed("fire") and fire_cooldown <= 0.0:
 		fire_energy()
 
 func fire_energy() -> void:
-	fire_cooldown = fire_interval
+	fire_cooldown = maxf(0.08, fire_interval - core_module_level * 0.02)
 	var projectile := ENERGY_PROJECTILE.instantiate()
 	projectile.setup(global_position + last_direction * 30.0, last_direction)
 	get_tree().current_scene.add_child(projectile)
@@ -71,6 +76,29 @@ func take_contact_damage(amount: int) -> void:
 		if game_over:
 			game_over.visible = true
 
+func install_module(module_name: String) -> bool:
+	if upgrade_points <= 0:
+		return false
+	match module_name:
+		"engine":
+			engine_module_level += 1
+		"core":
+			core_module_level += 1
+		"drone":
+			drone_module_level += 1
+			if not is_instance_valid(drone_instance):
+				drone_instance = DRONE.instantiate()
+				get_tree().current_scene.add_child(drone_instance)
+		_: return false
+	upgrade_points -= 1
+	_update_module_hud()
+	return true
+
+func drone_support_pulse() -> void:
+	var label := get_tree().current_scene.get_node_or_null("HUD/ModuleLabel")
+	if label:
+		label.text = "MODULES  E:%d C:%d D:%d  •  DRONE PULSE" % [engine_module_level, core_module_level, drone_module_level]
+
 func _update_progression_hud() -> void:
 	var scene := get_tree().current_scene
 	var level_label := scene.get_node_or_null("HUD/LevelLabel")
@@ -84,3 +112,8 @@ func _update_health_hud() -> void:
 	var health_label := get_tree().current_scene.get_node_or_null("HUD/HealthLabel")
 	if health_label:
 		health_label.text = "HULL  %03d / %03d" % [health, max_health]
+
+func _update_module_hud() -> void:
+	var label := get_tree().current_scene.get_node_or_null("HUD/ModuleLabel")
+	if label:
+		label.text = "MODULES  E:%d C:%d D:%d  •  POINTS:%d" % [engine_module_level, core_module_level, drone_module_level, upgrade_points]
