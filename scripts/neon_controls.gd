@@ -1,6 +1,6 @@
 extends Control
 
-## Phase 12 — premium landscape touch controls.
+## Phase 12 — premium landscape touch controls. Always available in gameplay.
 const CYAN := Color("39d9ff")
 const BLUE := Color("3d7dff")
 const PURPLE := Color("a66cff")
@@ -23,16 +23,14 @@ var dash_feedback := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	visible = true
 	set_process_input(true)
 	set_process(true)
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	var lobby := get_tree().current_scene.get_node_or_null("Menu/UI/MainPanel")
-	if lobby:
-		visible = not lobby.visible
-	if not visible:
-		return
+	# Visibility is controlled by the menu controller. Never hide the controls
+	# based on touchscreen detection or a guessed lobby node path.
 	if special_cooldown > 0.0 and not get_tree().paused:
 		special_cooldown = maxf(0.0, special_cooldown - delta)
 	if special_active > 0.0:
