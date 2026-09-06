@@ -16,6 +16,7 @@ var meta_cores := 0
 var juice_time := 0.0
 var run_reward_claimed := false
 var game_over := false
+var _game_over_touch_lock := false
 
 @onready var timer_label: Label = $HUD/TopLeft/TimerLabel
 @onready var player: CharacterBody2D = $Player
@@ -28,12 +29,30 @@ var game_over := false
 @onready var mobile_controls: CanvasLayer = $MobileControls
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	timer_label.text = "SURVIVAL  00:00"
 	_update_progression_hud()
 	_update_health_hud()
 	_update_economy_hud()
 	_build_game_over_actions()
 	_set_game_over_state(false)
+
+func _input(event: InputEvent) -> void:
+	# Android touch fallback: handle Game Over buttons before any CanvasLayer can consume the touch.
+	if not game_over or _game_over_touch_lock:
+		return
+	if event is InputEventScreenTouch and event.pressed:
+		var p := event.position
+		var restart_rect := Rect2(475, 365, 155, 55)
+		var exit_rect := Rect2(650, 365, 155, 55)
+		if restart_rect.has_point(p):
+			_game_over_touch_lock = true
+			restart_run()
+			get_viewport().set_input_as_handled()
+		elif exit_rect.has_point(p):
+			_game_over_touch_lock = true
+			exit_to_lobby()
+			get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
 	if get_tree().paused or game_over:
@@ -82,10 +101,10 @@ func _build_game_over_actions() -> void:
 		restart.mouse_filter = Control.MOUSE_FILTER_STOP
 		restart.process_mode = Node.PROCESS_MODE_ALWAYS
 		restart.focus_mode = Control.FOCUS_ALL
-		restart.position = Vector2(45, 160)
-		restart.size = Vector2(155, 55)
-		restart.text = "RESTART RUN"
-		restart.add_theme_font_size_override("font_size", 16)
+	restart.position = Vector2(45, 160)
+	restart.size = Vector2(155, 55)
+	restart.text = "RESTART RUN"
+	restart.add_theme_font_size_override("font_size", 16)
 	if restart and not restart.pressed.is_connected(restart_run):
 		restart.pressed.connect(restart_run)
 
@@ -107,16 +126,9 @@ func _build_game_over_actions() -> void:
 	if not exit.pressed.is_connected(exit_to_lobby):
 		exit.pressed.connect(exit_to_lobby)
 
-func _game_over_button_style(accent: Color) -> StyleBoxFlat:
-	var s := StyleBoxFlat.new()
-	s.bg_color = Color(accent.r, accent.g, accent.b, 0.12)
-	s.border_color = Color(accent.r, accent.g, accent.b, 0.9)
-	s.set_border_width_all(2)
-	s.set_corner_radius_all(10)
-	return s
-
 func _set_game_over_state(value: bool) -> void:
 	game_over = value
+	_game_over_touch_lock = false
 	game_over_panel.visible = value
 	game_over_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	if mobile_controls:
@@ -206,11 +218,13 @@ func claim_rewarded_ad_placeholder() -> void:
 		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
 func restart_run() -> void:
+	_game_over_touch_lock = true
 	game_over = false
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 func exit_to_lobby() -> void:
+	_game_over_touch_lock = true
 	game_over = false
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
