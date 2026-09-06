@@ -31,7 +31,15 @@
 **Status: Complete**
 
 ## Phase 4 — XP / Level / Roguelite Progression
-Planned.
+- Collectible green XP orb scene
+- Automatic XP orb spawning in the survival arena
+- Player XP tracking and collection
+- Level-up threshold and increasing XP requirements
+- Level counter and XP progress HUD
+- Upgrade-point reward on level-up for future roguelite choices
+- Progression hooks ready for Phase 5+ content
+
+**Status: Complete**
 
 ## Phase 5 — Enemies / Bosses / World Content
 Planned.
