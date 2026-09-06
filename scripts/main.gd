@@ -95,15 +95,15 @@ func _spawn_boss() -> void:
 func _update_boss_juice() -> void:
 	if not boss_spawned:
 		return
-	var boss := get_node_or_null("Boss")
+	var boss: Node = get_node_or_null("Boss")
 	if boss == null:
 		for child in get_children():
 			if child is CharacterBody2D and child.has_method("take_damage") and child != player:
 				boss = child
 				break
-	if boss and "health" in boss and "max_health" in boss:
-			boss_bar.value = (float(boss.health) / float(boss.max_health)) * 100.0
-			boss_label.text = "BOSS  %03d / %03d" % [int(ceil(boss.health)), int(boss.max_health)]
+	if boss != null and is_instance_valid(boss):
+		boss_bar.value = (float(boss.health) / float(boss.max_health)) * 100.0
+		boss_label.text = "BOSS  %03d / %03d" % [int(ceil(boss.health)), int(boss.max_health)]
 	var pulse := 0.85 + sin(juice_time * 5.0) * 0.15
 	boss_label.modulate.a = pulse
 	boss_label.scale = Vector2.ONE * (1.0 + sin(juice_time * 5.0) * 0.03)
