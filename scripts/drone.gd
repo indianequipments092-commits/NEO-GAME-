@@ -17,10 +17,12 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		player = get_tree().current_scene.get_node_or_null("Player")
 		return
+
 	orbit_angle += orbit_speed * delta
 	pulse_time += delta
 	global_position = player.global_position + Vector2.from_angle(orbit_angle) * orbit_radius
 	rotation = orbit_angle
+
 	if pulse_time >= pulse_interval:
 		pulse_time = 0.0
 		pulse_count += 1
