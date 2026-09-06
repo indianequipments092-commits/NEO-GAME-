@@ -109,4 +109,12 @@
 **Status: Complete — repository QA pass finished; Godot runtime validation remains manual**
 
 ## Phase 11 — Release / Store Preparation
-Planned.
+- Release and store-readiness checklist
+- Android / Google Play AAB release guidance
+- Current Google Play target API requirement recorded (Android 16 / API 36+)
+- Release signing and secret-handling safeguards documented
+- Versioning policy documented
+- Store assets and Play Console manual gates documented
+- Final clean-checkout release gate documented
+
+**Status: Complete — repository release preparation finished; final local export and Play Console submission remain manual**
