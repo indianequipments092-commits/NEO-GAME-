@@ -1,13 +1,17 @@
 extends CharacterBody2D
 
-## Large non-weapon contact hazard used as the Phase 5 boss encounter.
+## Boss encounter with a real health/damage loop for Phase 5+.
 @export var move_speed: float = 48.0
 @export var contact_damage: int = 18
+@export var max_health: float = 500.0
+@export var xp_reward: int = 250
 
+var health: float = 500.0
 var player: Node2D
 var pulse_time := 0.0
 
 func _ready() -> void:
+	health = max_health
 	player = get_tree().current_scene.get_node_or_null("Player")
 	var area := get_node_or_null("ContactArea")
 	if area:
@@ -24,6 +28,22 @@ func _physics_process(delta: float) -> void:
 	var visual := get_node_or_null("Visual")
 	if visual:
 		visual.scale = Vector2.ONE * (1.0 + sin(pulse_time * 3.0) * 0.05)
+
+func take_damage(amount: float) -> void:
+	if health <= 0.0:
+		return
+	health = maxf(0.0, health - amount)
+	var label := get_tree().current_scene.get_node_or_null("HUD/BossLabel")
+	if label:
+		label.text = "BOSS  %03d / %03d" % [int(ceil(health)), int(max_health)]
+	if health <= 0.0:
+		var scene := get_tree().current_scene
+		if scene.has_method("spawn_enemy_xp"):
+			scene.spawn_enemy_xp(global_position, xp_reward)
+		var boss_label := scene.get_node_or_null("HUD/BossLabel")
+		if boss_label:
+			boss_label.text = "BOSS DEFEATED"
+		queue_free()
 
 func _on_contact_body_entered(body: Node2D) -> void:
 	if body.has_method("take_contact_damage"):
