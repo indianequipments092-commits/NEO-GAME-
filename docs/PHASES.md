@@ -42,7 +42,16 @@
 **Status: Complete**
 
 ## Phase 5 — Enemies / Bosses / World Content
-Planned.
+- Basic pursuing enemy scene with collision-based contact hazard behavior
+- Enemy spawning from arena edges during the survival run
+- Player hull/health system with brief contact invulnerability
+- Hull status HUD and run-ended state
+- Large boss encounter that appears after 60 seconds
+- Boss encounter HUD indicator and pulsing visual
+- XP spawning hooks retained for future enemy defeat rewards
+- Phase 5 world-content foundation ready for Phase 6
+
+**Status: Complete**
 
 ## Phase 6 — Ships / Drones / Modules / Meta Progression
 Planned.
