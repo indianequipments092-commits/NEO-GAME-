@@ -15,6 +15,7 @@ var module_input_cooldown := 0.0
 var meta_cores := 0
 var juice_time := 0.0
 var run_reward_claimed := false
+var game_over := false
 
 @onready var timer_label: Label = $HUD/TopLeft/TimerLabel
 @onready var player: CharacterBody2D = $Player
@@ -23,6 +24,8 @@ var run_reward_claimed := false
 @onready var xp_bar: ProgressBar = $HUD/XPBar
 @onready var economy: Node = $Economy
 @onready var credits_label: Label = $HUD/CreditsPanel/CreditsLabel
+@onready var game_over_panel: Panel = $HUD/GameOverPanel
+@onready var mobile_controls: CanvasLayer = $MobileControls
 
 func _ready() -> void:
 	timer_label.text = "SURVIVAL  00:00"
@@ -30,9 +33,10 @@ func _ready() -> void:
 	_update_health_hud()
 	_update_economy_hud()
 	_build_game_over_actions()
+	_set_game_over_state(false)
 
 func _process(delta: float) -> void:
-	if get_tree().paused:
+	if get_tree().paused or game_over:
 		return
 	survival_time += delta
 	xp_spawn_time += delta
@@ -56,9 +60,7 @@ func _process(delta: float) -> void:
 	timer_label.text = "SURVIVAL  %02d:%02d" % [minutes, seconds]
 
 func _build_game_over_actions() -> void:
-	var panel := get_node_or_null("HUD/GameOverPanel")
-	if panel == null:
-		return
+	var panel := game_over_panel
 	var sub := panel.get_node_or_null("GameOverSubLabel")
 	if sub == null:
 		sub = Label.new()
@@ -68,14 +70,17 @@ func _build_game_over_actions() -> void:
 		sub.add_theme_font_size_override("font_size", 14)
 		sub.add_theme_color_override("font_color", Color("ff7088"))
 		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+	if sub.get_parent() == null:
 		panel.add_child(sub)
-	var restart := panel.get_node_or_null("RestartButton")
+	var restart := panel.get_node_or_null("RestartButton") as Button
 	if restart:
 		restart.position = Vector2(45, 160)
 		restart.size = Vector2(155, 55)
 		restart.add_theme_font_size_override("font_size", 16)
-	var exit := panel.get_node_or_null("ExitButton")
+	if restart and not restart.pressed.is_connected(restart_run):
+		restart.pressed.connect(restart_run)
+	var exit := panel.get_node_or_null("ExitButton") as Button
 	if exit == null:
 		exit = Button.new()
 		exit.name = "ExitButton"
@@ -87,8 +92,7 @@ func _build_game_over_actions() -> void:
 		exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
 		exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
 		exit.pressed.connect(exit_to_lobby)
-	panel.add_child(exit)
-	exit.visible = false
+		panel.add_child(exit)
 
 func _game_over_button_style(accent: Color) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
@@ -97,6 +101,29 @@ func _game_over_button_style(accent: Color) -> StyleBoxFlat:
 	s.set_border_width_all(2)
 	s.set_corner_radius_all(10)
 	return s
+
+func _set_game_over_state(value: bool) -> void:
+	game_over = value
+	game_over_panel.visible = value
+	# Game-over buttons must remain interactive while the gameplay scene is paused.
+	game_over_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	if mobile_controls:
+		mobile_controls.visible = not value
+		mobile_controls.process_mode = Node.PROCESS_MODE_ALWAYS
+		var controls := mobile_controls.get_node_or_null("Controls")
+		if controls:
+			controls.visible = not value
+		var joystick := mobile_controls.get_node_or_null("FloatingJoystick")
+		if joystick:
+			joystick.visible = not value
+	if value:
+		Input.action_release("fire")
+		get_tree().paused = true
+
+func on_player_game_over() -> void:
+	if game_over:
+		return
+	_set_game_over_state(true)
 
 func _handle_module_input() -> void:
 	if module_input_cooldown > 0.0 or player.upgrade_points <= 0:
@@ -160,7 +187,6 @@ func claim_run_reward() -> void:
 	credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
 
 func claim_rewarded_ad_placeholder() -> void:
-	## Safe integration hook only; no live ad SDK is bundled in this project.
 	var reward: int = economy.claim_ad_reward_placeholder()
 	if reward > 0:
 		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
@@ -171,9 +197,14 @@ func restart_run() -> void:
 
 func exit_to_lobby() -> void:
 	get_tree().paused = false
+	game_over = false
+	if mobile_controls:
+		mobile_controls.visible = false
 	var menu := get_node_or_null("Menu")
 	if menu and menu.has_method("_return_to_main"):
 		menu._return_to_main()
+	else:
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func add_meta_core() -> void:
 	meta_cores += 1
