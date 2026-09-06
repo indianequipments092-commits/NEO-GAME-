@@ -11,7 +11,14 @@
 **Status: Complete**
 
 ## Phase 2 — Core Gameplay
-Planned next.
+- Playable player scene and controller
+- 8-direction movement with acceleration and friction
+- Bounded survival arena with collision walls
+- Main gameplay scene and startup flow
+- Survival timer HUD
+- Basic gameplay feedback/instructions
+
+**Status: Complete**
 
 ## Phase 3 — Combat
 Planned.
