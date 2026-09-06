@@ -21,7 +21,14 @@
 **Status: Complete**
 
 ## Phase 3 — Combat
-Planned.
+- Fictional energy projectile scene using Area2D overlap detection
+- Player firing control with a configurable fire interval
+- Direction memory so energy follows the player's last movement direction
+- Projectile lifetime and automatic cleanup
+- Generic `take_damage()` hook for future damageable targets
+- Combat counter HUD and Space-key control hint
+
+**Status: Complete**
 
 ## Phase 4 — XP / Level / Roguelite Progression
 Planned.
