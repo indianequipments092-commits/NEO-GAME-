@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-## Core player controller with combat, progression, modules and mobile-compatible input actions.
+## Core player controller with combat, progression, modules and Phase 12 HUD.
 const ENERGY_PROJECTILE := preload("res://scenes/energy_projectile.tscn")
 const DRONE := preload("res://scenes/drone.tscn")
 
@@ -35,10 +35,8 @@ func _physics_process(delta: float) -> void:
 	var target_velocity := input_direction * (move_speed + engine_module_level * 25.0)
 	var rate := acceleration if input_direction != Vector2.ZERO else friction
 	velocity = velocity.move_toward(target_velocity, rate * delta)
-
 	if input_direction != Vector2.ZERO:
 		last_direction = input_direction.normalized()
-
 	move_and_slide()
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
 	damage_cooldown = maxf(0.0, damage_cooldown - delta)
@@ -51,7 +49,7 @@ func fire_energy() -> void:
 	projectile.setup(global_position + last_direction * 30.0, last_direction)
 	get_tree().current_scene.add_child(projectile)
 	projectiles_fired += 1
-	var combat_label := get_tree().current_scene.get_node_or_null("HUD/CombatLabel")
+	var combat_label := get_tree().current_scene.get_node_or_null("HUD/StatusPanel/CombatLabel")
 	if combat_label:
 		combat_label.text = "ENERGY  •  %03d" % projectiles_fired
 
@@ -75,11 +73,13 @@ func take_contact_damage(amount: int) -> void:
 		var scene := get_tree().current_scene
 		if scene.has_method("claim_run_reward"):
 			scene.claim_run_reward()
-		var game_over := scene.get_node_or_null("HUD/GameOverLabel")
+		var game_over := scene.get_node_or_null("HUD/GameOverPanel")
 		if game_over:
-			game_over.text = "RUN ENDED"
+			var label := game_over.get_node_or_null("GameOverLabel")
+			if label:
+				label.text = "RUN ENDED"
 			game_over.visible = true
-		var restart := scene.get_node_or_null("HUD/RestartButton")
+		var restart := scene.get_node_or_null("HUD/GameOverPanel/RestartButton")
 		if restart:
 			restart.visible = true
 		get_tree().paused = true
@@ -88,41 +88,45 @@ func install_module(module_name: String) -> bool:
 	if upgrade_points <= 0:
 		return false
 	match module_name:
-		"engine":
-			engine_module_level += 1
-		"core":
-			core_module_level += 1
+		"engine": engine_module_level += 1
+		"core": core_module_level += 1
 		"drone":
 			drone_module_level += 1
 			if not is_instance_valid(drone_instance):
 				drone_instance = DRONE.instantiate()
 				get_tree().current_scene.add_child(drone_instance)
-		_:
-			return false
+		_: return false
 	upgrade_points -= 1
 	_update_module_hud()
 	return true
 
 func drone_support_pulse() -> void:
-	var label := get_tree().current_scene.get_node_or_null("HUD/ModuleLabel")
+	var label := get_tree().current_scene.get_node_or_null("HUD/StatusPanel/ModuleLabel")
 	if label:
 		label.text = "MODULES  E:%d C:%d D:%d  •  DRONE PULSE" % [engine_module_level, core_module_level, drone_module_level]
 
 func _update_progression_hud() -> void:
 	var scene := get_tree().current_scene
-	var level_label := scene.get_node_or_null("HUD/LevelLabel")
-	var xp_label := scene.get_node_or_null("HUD/XPLabel")
+	var level_label := scene.get_node_or_null("HUD/TopLeft/LevelLabel")
+	var xp_label := scene.get_node_or_null("HUD/TopLeft/XPLabel")
+	var xp_bar := scene.get_node_or_null("HUD/XPBar")
 	if level_label:
 		level_label.text = "LV  %02d" % level
 	if xp_label:
 		xp_label.text = "XP  %03d / %03d" % [xp, xp_to_next_level]
+	if xp_bar:
+		xp_bar.value = (float(xp) / float(xp_to_next_level)) * 100.0
 
 func _update_health_hud() -> void:
-	var health_label := get_tree().current_scene.get_node_or_null("HUD/HealthLabel")
+	var scene := get_tree().current_scene
+	var health_label := scene.get_node_or_null("HUD/StatusPanel/HealthLabel")
+	var health_bar := scene.get_node_or_null("HUD/StatusPanel/HealthBar")
 	if health_label:
 		health_label.text = "HULL  %03d / %03d" % [health, max_health]
+	if health_bar:
+		health_bar.value = (float(health) / float(max_health)) * 100.0
 
 func _update_module_hud() -> void:
-	var label := get_tree().current_scene.get_node_or_null("HUD/ModuleLabel")
+	var label := get_tree().current_scene.get_node_or_null("HUD/StatusPanel/ModuleLabel")
 	if label:
-		label.text = "MODULES  E:%d C:%d D:%d  •  POINTS:%d" % [engine_module_level, core_module_level, drone_module_level, upgrade_points]
+		label.text = "MODULES E:%d C:%d D:%d  •  POINTS:%d" % [engine_module_level, core_module_level, drone_module_level, upgrade_points]
