@@ -65,16 +65,20 @@ func collect_xp(amount: int) -> void:
 	_update_progression_hud()
 
 func take_contact_damage(amount: int) -> void:
-	if damage_cooldown > 0.0:
+	if damage_cooldown > 0.0 or health <= 0:
 		return
 	damage_cooldown = contact_invulnerability
 	health = maxi(0, health - amount)
 	_update_health_hud()
 	if health <= 0:
-		get_tree().paused = true
-		var game_over := get_tree().current_scene.get_node_or_null("HUD/GameOverLabel")
+		var scene := get_tree().current_scene
+		if scene.has_method("claim_run_reward"):
+			scene.claim_run_reward()
+		var game_over := scene.get_node_or_null("HUD/GameOverLabel")
 		if game_over:
+			game_over.text = "RUN ENDED"
 			game_over.visible = true
+		get_tree().paused = true
 
 func install_module(module_name: String) -> bool:
 	if upgrade_points <= 0:
