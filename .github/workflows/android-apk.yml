@@ -46,6 +46,9 @@ jobs:
           unzip -q /tmp/templates.tpz -d /tmp/templates
           cp /tmp/templates/templates/android_release.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
           cp /tmp/templates/templates/android_debug.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          if [ -f /tmp/templates/templates/android_source.zip ]; then
+            cp /tmp/templates/templates/android_source.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          fi
 
       - name: Validate project
         env:
@@ -59,7 +62,7 @@ jobs:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
         run: |
           mkdir -p build
-          /tmp/godot/godot --headless --path . --export-release "Android APK" build/NEON_SPACE_SURVIVAL.apk
+          /tmp/godot/godot --headless --path . --export-debug "Android APK" build/NEON_SPACE_SURVIVAL.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
