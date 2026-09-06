@@ -95,12 +95,20 @@ offset_bottom = 48.0
 theme_override_font_sizes/font_size = 16
 text = "ENERGY  •  000"
 
+[node name="ModuleLabel" type="Label" parent="HUD"]
+offset_left = 670.0
+offset_top = 48.0
+offset_right = 1030.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 14
+text = "MODULES  E:0 C:0 D:0  •  POINTS:0"
+
 [node name="BossLabel" type="Label" parent="HUD"]
-offset_left = 500.0
-offset_top = 78.0
-offset_right = 780.0
-offset_bottom = 108.0
-theme_override_font_sizes/font_size = 20
+offset_left = 1000.0
+offset_top = 22.0
+offset_right = 1250.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 16
 text = "BOSS ENCOUNTER"
 visible = false
 
@@ -117,7 +125,7 @@ visible = false
 [node name="Hint" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 680.0
-offset_right = 900.0
+offset_right = 1000.0
 offset_bottom = 710.0
 theme_override_font_sizes/font_size = 16
-text = "WASD / ARROWS  •  Move     SPACE  •  Energy     Collect green XP"
+text = "WASD / ARROWS  •  Move     SPACE • Energy     Level up → module points"
