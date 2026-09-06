@@ -1,10 +1,27 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource path="res://scripts/neon_controls.gd" type="Script" id="1_controls"]
+[ext_resource path="res://addons/touch_screen_joystick/touch_screen_joystick.gd" type="Script" id="2_joystick"]
 
 [node name="MobileControls" type="CanvasLayer"]
 layer = 20
 process_mode = 3
+
+[node name="FloatingJoystick" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_joystick")
+base_radius = 105.0
+knob_radius = 43.0
+deadzone = 18.0
+movement_width_ratio = 0.68
+color = Color(0.223529, 0.85098, 1, 1)
+back_color = Color(0.007843, 0.023529, 0.078431, 0.72)
 
 [node name="Controls" type="Control" parent="."]
 layout_mode = 3
