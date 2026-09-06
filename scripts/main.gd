@@ -29,6 +29,7 @@ func _ready() -> void:
 	_update_progression_hud()
 	_update_health_hud()
 	_update_economy_hud()
+	_build_game_over_actions()
 
 func _process(delta: float) -> void:
 	if get_tree().paused:
@@ -53,6 +54,49 @@ func _process(delta: float) -> void:
 	var minutes := total_seconds / 60
 	var seconds := total_seconds % 60
 	timer_label.text = "SURVIVAL  %02d:%02d" % [minutes, seconds]
+
+func _build_game_over_actions() -> void:
+	var panel := get_node_or_null("HUD/GameOverPanel")
+	if panel == null:
+		return
+	var sub := panel.get_node_or_null("GameOverSubLabel")
+	if sub == null:
+		sub = Label.new()
+		sub.name = "GameOverSubLabel"
+		sub.position = Vector2(25, 108)
+		sub.size = Vector2(370, 40)
+		sub.add_theme_font_size_override("font_size", 14)
+		sub.add_theme_color_override("font_color", Color("ff7088"))
+		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+		panel.add_child(sub)
+	var restart := panel.get_node_or_null("RestartButton")
+	if restart:
+		restart.position = Vector2(45, 160)
+		restart.size = Vector2(155, 55)
+		restart.add_theme_font_size_override("font_size", 16)
+	var exit := panel.get_node_or_null("ExitButton")
+	if exit == null:
+		exit = Button.new()
+		exit.name = "ExitButton"
+		exit.position = Vector2(220, 160)
+		exit.size = Vector2(155, 55)
+		exit.text = "EXIT"
+		exit.add_theme_font_size_override("font_size", 16)
+		exit.add_theme_color_override("font_color", Color("dff8ff"))
+		exit.add_theme_stylebox_override("normal", _game_over_button_style(Color("39d9ff")))
+		exit.add_theme_stylebox_override("pressed", _game_over_button_style(Color("ff4f6d")))
+		exit.pressed.connect(restart_run)
+		panel.add_child(exit)
+	exit.visible = false
+
+func _game_over_button_style(accent: Color) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = Color(accent.r, accent.g, accent.b, 0.12)
+	s.border_color = Color(accent.r, accent.g, accent.b, 0.9)
+	s.set_border_width_all(2)
+	s.set_corner_radius_all(10)
+	return s
 
 func _handle_module_input() -> void:
 	if module_input_cooldown > 0.0 or player.upgrade_points <= 0:
