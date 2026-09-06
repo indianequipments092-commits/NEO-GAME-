@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scenes/player.tscn" type="PackedScene" id="2_player"]
 [ext_resource path="res://scripts/starfield.gd" type="Script" id="3_starfield"]
 [ext_resource path="res://scripts/settings.gd" type="Script" id="4_settings"]
 [ext_resource path="res://scenes/menu.tscn" type="PackedScene" id="5_menu"]
+[ext_resource path="res://scripts/economy.gd" type="Script" id="6_economy"]
 
 [sub_resource type="RectangleShape2D" id="Wall_h"]
 size = Vector2(1280, 32)
@@ -24,6 +25,9 @@ script = ExtResource("1_main")
 
 [node name="Settings" type="Node" parent="."]
 script = ExtResource("4_settings")
+
+[node name="Economy" type="Node" parent="."]
+script = ExtResource("6_economy")
 
 [node name="Background" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720)
@@ -113,6 +117,15 @@ offset_bottom = 72.0
 theme_override_font_sizes/font_size = 14
 text = "MODULES  E:0 C:0 D:0  •  POINTS:0"
 
+[node name="CreditsLabel" type="Label" parent="HUD"]
+offset_left = 1040.0
+offset_top = 48.0
+offset_right = 1250.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 14
+text = "CREDITS  0000"
+horizontal_alignment = 2
+
 [node name="BossLabel" type="Label" parent="HUD"]
 offset_left = 1000.0
 offset_top = 22.0
@@ -138,6 +151,6 @@ offset_top = 680.0
 offset_right = 1000.0
 offset_bottom = 710.0
 theme_override_font_sizes/font_size = 16
-text = "WASD / ARROWS  •  Move     SPACE • Energy     ESC • Pause / Settings"
+text = "WASD / ARROWS  •  Move     SPACE • Energy     ESC • Pause / Settings     Credits → Run rewards"
 
 [node name="Menu" parent="." instance=ExtResource("5_menu")]
