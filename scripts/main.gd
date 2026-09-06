@@ -9,7 +9,7 @@ var survival_time := 0.0
 var xp_spawn_time := 0.0
 var enemy_spawn_time := 0.0
 var xp_spawn_interval := 1.5
-var enemy_spawn_interval := 2.5
+var enemy_spawn_interval := 1.5
 var boss_spawned := false
 var module_input_cooldown := 0.0
 var meta_cores := 0
@@ -17,6 +17,7 @@ var juice_time := 0.0
 var run_reward_claimed := false
 var game_over := false
 var _game_over_touch_lock := false
+const MAX_ACTIVE_ENEMIES := 24
 
 @onready var timer_label: Label = $HUD/TopLeft/TimerLabel
 @onready var player: CharacterBody2D = $Player
@@ -38,7 +39,6 @@ func _ready() -> void:
 	_set_game_over_state(false)
 
 func _input(event: InputEvent) -> void:
-	# Android touch fallback: handle Game Over buttons before any CanvasLayer can consume the touch.
 	if not game_over or _game_over_touch_lock:
 		return
 	if event is InputEventScreenTouch and event.pressed:
@@ -101,10 +101,10 @@ func _build_game_over_actions() -> void:
 		restart.mouse_filter = Control.MOUSE_FILTER_STOP
 		restart.process_mode = Node.PROCESS_MODE_ALWAYS
 		restart.focus_mode = Control.FOCUS_ALL
-	restart.position = Vector2(45, 160)
-	restart.size = Vector2(155, 55)
-	restart.text = "RESTART RUN"
-	restart.add_theme_font_size_override("font_size", 16)
+		restart.position = Vector2(45, 160)
+		restart.size = Vector2(155, 55)
+		restart.text = "RESTART RUN"
+		restart.add_theme_font_size_override("font_size", 16)
 	if restart and not restart.pressed.is_connected(restart_run):
 		restart.pressed.connect(restart_run)
 
@@ -177,9 +177,25 @@ func spawn_enemy_xp(spawn_position: Vector2, value: int) -> void:
 	add_child(orb)
 
 func _spawn_enemy() -> void:
+	var active := 0
+	for child in get_children():
+		if child.is_in_group("enemies"):
+			active += 1
+	if active >= MAX_ACTIVE_ENEMIES:
+		return
 	var enemy := ENEMY.instantiate()
-	enemy.position = _random_edge_position()
+	enemy.name = "Enemy_%03d" % active
+	enemy.add_to_group("enemies")
+	enemy.position = _random_enemy_spawn_position()
 	add_child(enemy)
+
+func _random_enemy_spawn_position() -> Vector2:
+	var side := randi() % 4
+	match side:
+		0: return Vector2(randf_range(90.0, 1190.0), 115.0)
+		1: return Vector2(randf_range(90.0, 1190.0), 605.0)
+		2: return Vector2(90.0, randf_range(115.0, 605.0))
+		_: return Vector2(1190.0, randf_range(115.0, 605.0))
 
 func _spawn_boss() -> void:
 	var boss := BOSS.instantiate()
