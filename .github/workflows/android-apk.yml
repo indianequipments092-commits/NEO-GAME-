@@ -39,12 +39,12 @@ jobs:
           gradle-version: '8.14.3'
 
       - name: Compile updater plugin
+        working-directory: android-updater-plugin
         run: |
           gradle --no-daemon :plugin:assembleDebug :plugin:assembleRelease
-          mkdir -p addons/neon_android_updater/bin/debug addons/neon_android_updater/bin/release
-          cp android-updater-plugin/plugin/build/outputs/aar/plugin-debug.aar addons/neon_android_updater/bin/debug/NeonAndroidUpdater-debug.aar
-          cp android-updater-plugin/plugin/build/outputs/aar/plugin-release.aar addons/neon_android_updater/bin/release/NeonAndroidUpdater-release.aar
-        working-directory: .
+          mkdir -p ../addons/neon_android_updater/bin/debug ../addons/neon_android_updater/bin/release
+          cp plugin/build/outputs/aar/plugin-debug.aar ../addons/neon_android_updater/bin/debug/NeonAndroidUpdater-debug.aar
+          cp plugin/build/outputs/aar/plugin-release.aar ../addons/neon_android_updater/bin/release/NeonAndroidUpdater-release.aar
 
       - name: Download Godot 4.6.3
         run: |
