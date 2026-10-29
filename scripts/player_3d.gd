@@ -68,7 +68,7 @@ func _ready() -> void:
 	camera.rotation_degrees.x = -13.0
 	camera.current = true
 	camera_pivot.add_child(camera)
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if not OS.has_feature("web_android") else Input.MOUSE_MODE_VISIBLE
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if OS.has_feature("mobile") else Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
