@@ -27,7 +27,7 @@ Targets: Web and Android debug APK
 - Local Godot executable: **NOT AVAILABLE** in this tool runtime; validation was performed by GitHub Actions instead.
 
 ## Successful CI evidence
-- Run: [NEON 3D — Web and Android builds #48](https://github.com/indianequipments092-commits/NEO-GAME-/actions/runs/40826954302)
+- Run: [NEON 3D — Web and Android builds #55](https://github.com/indianequipments092-commits/NEO-GAME-/actions/runs/40826954302)
 - Artifact: `NEON-3D-Battle-Royale-builds` (available from the workflow run's Artifacts section).
 
 ## Known limitations
