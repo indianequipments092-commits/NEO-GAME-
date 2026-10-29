@@ -1,50 +1,46 @@
-# NEON SPACE SURVIVAL
+# NEON 3D BATTLE ROYALE
 
-A fast-paced neon space survival roguelite built with Godot 4.
+A Godot 4 third-person 3D island-combat prototype. This project is being rebuilt on a separate feature branch from the earlier 2D space-survival game.
 
-## Current status
+## Prototype status
 
-**Phases 1–11: repository implementation complete.**
-
-The project now includes the core survival loop, movement, energy combat, XP/levels, enemies and boss content, ship modules and drone support, polish foundations, pause/settings UI, in-game Credits economy hooks, QA documentation, release metadata, and Android touch controls.
+- Procedurally generated island with ocean edge, roads, simple houses and trees.
+- Third-person player controller, camera look, keyboard movement and hitscan rifle.
+- 49 lightweight offline bots (50 combatants including the player) for an early scale smoke test.
+- Health, elimination/win state, timer, restart and touch-friendly movement/fire buttons.
+- Godot Web and Android export presets plus a GitHub Actions validation/build workflow.
+- Legacy 2D assets and scripts are retained for rollback; no legacy files are deleted in this phase.
 
 ## Controls
 
 ### Desktop
 - **WASD / Arrow keys** — Move
-- **Space** — Fire energy
-- **1 / 2 / 3** — Install Engine / Core / Drone modules when upgrade points are available
-- **Esc** — Pause / Settings
+- **Mouse movement** — Look around (click to recapture the mouse)
+- **Left mouse / Space** — Fire
+- **Esc** — Release/capture mouse
+- **R** — Restart after elimination or victory
 
-### Android / touch
-On touch devices, the on-screen movement and FIRE controls appear automatically. They drive the same input actions as desktop controls.
+### Touch
+- On-screen arrow buttons — Move
+- **FIRE** — Shoot
 
-## Gameplay systems
+## Build and test
 
-- Bounded survival arena
-- Survival timer and HUD
-- Energy projectile combat
-- XP orbs, levels, and upgrade points
-- Enemy spawning and contact damage
-- Boss encounter at 60 seconds with health, damage, defeat, and XP reward
-- Engine, Core, and Drone modules
-- Autonomous orbiting support drone with periodic pulse feedback
-- Persistent fictional in-game Credits
-- Run-end Credit reward with duplicate-claim protection
-- Pause/settings UI with persistent local preferences
+GitHub Actions workflow: `.github/workflows/android-apk.yml`
 
-## Release
+The workflow imports and runs the project headlessly, then exports:
+- Android debug APK
+- Web build (`build/web/index.html` plus generated assets)
 
-The release preparation checklist is in `docs/RELEASE_PHASE11.md`.
+Download the artifacts from the workflow run. A Web export is not a hosted deployment by itself; deploy the generated `build/web` contents to a static host such as Vercel only after verifying the artifact.
 
-For Android/Google Play, the final local build still requires a configured Godot Android export preset, final package ID, release signing credentials, a release AAB, device testing, and Play Console declarations. **Never commit keystores, passwords, API keys, or other signing secrets.**
+## Known prototype limitations
 
-## QA
+- The island and character are generated from primitive meshes; this is a functional greybox, not final photorealistic art or animation.
+- Bots are local AI, not online players. Online multiplayer, matchmaking, authoritative server and anti-cheat are future work.
+- Browser and Android builds need actual CI/device/browser validation; do not infer release readiness from the presence of export configuration.
+- Touch movement/fire are implemented; mobile camera-look gestures and final performance tuning remain follow-up work.
 
-`docs/QA_PHASE10.md` contains the manual Godot runtime checklist. Repository-side fixes are committed, but a real Godot runtime/export test still needs to be performed in a Godot 4 environment before publishing.
+## Safety and migration
 
-## Repository
-
-- Default branch: `main`
-- Project name: `NEON SPACE SURVIVAL`
-- Engine: Godot 4
+See [the exact migration manifest](docs/NEON_3D_MIGRATION_MANIFEST.md). `main` remains the baseline branch, and legacy 2D files are not deleted.
