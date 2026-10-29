@@ -47,8 +47,8 @@ jobs:
           unzip -q /tmp/templates.tpz -d /tmp/templates
           cp /tmp/templates/templates/android_release.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
           cp /tmp/templates/templates/android_debug.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
-          cp /tmp/templates/templates/web_release.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
-          cp /tmp/templates/templates/web_debug.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          cp /tmp/templates/templates/web_nothreads_release.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          cp /tmp/templates/templates/web_nothreads_debug.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
 
       - name: Import and validate project
         run: |
