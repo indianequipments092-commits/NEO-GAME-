@@ -46,3 +46,12 @@ The workflow imports/runs the project headlessly and exports the configured Andr
 ## Safety and migration
 
 See the migration manifest. The legacy 2D files are retained, and main must remain untouched.
+
+
+## Automatic updates (feature branch)
+
+- The in-game updater checks the latest GitHub Release when connected to the internet and can be retried from the HUD.
+- Android downloads and verifies the APK, then opens the Android installer; the player must confirm installation and may need to allow installs from this app in Android settings.
+- Windows downloads and verifies a ZIP, then a separate helper waits for the game to close, applies the update in a user-writable install folder, and relaunches the game.
+- Tagged releases (`vMAJOR.MINOR.PATCH`) publish the Android APK, Windows package, and `update-manifest.json`. Android release signing secrets must be configured in GitHub Actions; no keystore or password is committed.
+- See `docs/NEON_3D_UPDATER_SPEC.md` for security boundaries and manual test requirements.

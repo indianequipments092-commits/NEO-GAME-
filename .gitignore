@@ -23,3 +23,9 @@ exports/
 *.exe
 *.pck
 *.zip
+
+# Generated Android build template and updater plugin outputs
+android/build/
+android-updater-plugin/.gradle/
+android-updater-plugin/plugin/build/
+addons/neon_android_updater/bin/

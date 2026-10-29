@@ -1,4 +1,4 @@
-name: NEON 3D — Web and Android builds
+name: NEON 3D — Web, Android and Windows builds
 
 on:
   workflow_dispatch:
@@ -33,6 +33,19 @@ jobs:
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.1.0"
 
+      - name: Build Android updater plugin AARs
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Compile updater plugin
+        run: |
+          gradle --no-daemon :plugin:assembleDebug :plugin:assembleRelease
+          mkdir -p addons/neon_android_updater/bin/debug addons/neon_android_updater/bin/release
+          cp android-updater-plugin/plugin/build/outputs/aar/plugin-debug.aar addons/neon_android_updater/bin/debug/NeonAndroidUpdater-debug.aar
+          cp android-updater-plugin/plugin/build/outputs/aar/plugin-release.aar addons/neon_android_updater/bin/release/NeonAndroidUpdater-release.aar
+        working-directory: .
+
       - name: Download Godot 4.6.3
         run: |
           curl -L --fail --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
@@ -47,6 +60,9 @@ jobs:
           unzip -q /tmp/templates.tpz -d /tmp/templates
           cp /tmp/templates/templates/android_release.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
           cp /tmp/templates/templates/android_debug.apk "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          cp /tmp/templates/templates/android_source.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          cp /tmp/templates/templates/windows_release_x86_64.exe "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+          cp /tmp/templates/templates/windows_debug_x86_64.exe "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
           cp /tmp/templates/templates/web_nothreads_release.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
           cp /tmp/templates/templates/web_nothreads_debug.zip "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
 
@@ -60,18 +76,24 @@ jobs:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
         run: |
           mkdir -p build
-          /tmp/godot/godot --headless --path . --export-debug "Android APK" build/NEON_3D_BATTLE_ROYALE.apk
+          /tmp/godot/godot --headless --path . --install-android-build-template --export-debug "Android APK" build/NEON_3D_BATTLE_ROYALE.apk
+
+      - name: Export Windows desktop
+        run: |
+          mkdir -p build/windows
+          /tmp/godot/godot --headless --path . --export-debug "Windows Desktop" build/windows/NEON_3D_BATTLE_ROYALE.exe
 
       - name: Export Web build
         run: |
           mkdir -p build/web
           /tmp/godot/godot --headless --path . --export-release "Web" build/web/index.html
 
-      - name: Upload Web and Android artifacts
+      - name: Upload Web, Android and Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NEON-3D-Battle-Royale-builds
           path: |
             build/NEON_3D_BATTLE_ROYALE.apk
+            build/windows/**
             build/web/**
           if-no-files-found: error

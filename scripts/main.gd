@@ -2,6 +2,7 @@ extends Node3D
 
 const PLAYER_SCRIPT = preload("res://scripts/player_3d.gd")
 const BOT_SCRIPT = preload("res://scripts/bot_3d.gd")
+const UPDATE_MANAGER_SCRIPT = preload("res://scripts/update_manager.gd")
 const BOT_COUNT := 8
 var player
 var status_label: Label
@@ -16,6 +17,10 @@ func _ready() -> void:
 	spawn_player()
 	spawn_bots()
 	build_hud()
+	var update_manager = UPDATE_MANAGER_SCRIPT.new()
+	update_manager.name = "UpdateManager"
+	add_child(update_manager)
+	update_manager.attach_to_hud(get_node("BattleHUD"))
 	get_viewport().size_changed.connect(_layout_hud)
 	_layout_hud()
 	if not OS.has_feature("mobile"):
@@ -280,6 +285,12 @@ func _layout_hud() -> void:
 	var layer := get_node_or_null("BattleHUD") as CanvasLayer
 	if layer == null:
 		return
+	var update_button := layer.get_node_or_null("UpdateButton") as Button
+	if update_button:
+		update_button.position = Vector2(size.x - 194.0, 18.0)
+	var update_status := layer.get_node_or_null("UpdateStatus") as Label
+	if update_status:
+		update_status.position = Vector2(size.x - 320.0, 62.0)
 	if is_instance_valid(status_label):
 		status_label.position = Vector2(20, 18)
 		status_label.size = Vector2(minf(size.x - 40.0, 780.0), 42)

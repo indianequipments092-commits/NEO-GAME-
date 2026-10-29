@@ -46,3 +46,6 @@ jump={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":69)]
 }
+
+[editor_plugins]
+enabled=PackedStringArray("res://addons/neon_android_updater/plugin.cfg")
