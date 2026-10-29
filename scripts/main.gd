@@ -3,7 +3,7 @@ extends Node3D
 const PLAYER_SCRIPT = preload("res://scripts/player_3d.gd")
 const BOT_SCRIPT = preload("res://scripts/bot_3d.gd")
 const BOT_COUNT := 49
-var player: CharacterBody3D
+var player
 var status_label: Label
 var message_label: Label
 var alive_bots := BOT_COUNT
@@ -16,7 +16,8 @@ func _ready() -> void:
 	spawn_player()
 	spawn_bots()
 	build_hud()
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if not OS.has_feature("mobile"):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	print("NEON 3D prototype ready: 1 player + %d offline bots" % BOT_COUNT)
 
 func _process(delta: float) -> void:
