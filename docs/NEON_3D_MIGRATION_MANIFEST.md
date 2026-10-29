@@ -1,0 +1,71 @@
+# NEON 3D Battle Royale — repository inventory and migration manifest
+
+- Repository: `indianequipments092-commits/NEO-GAME-`
+- Default branch: `main`
+- Baseline main commit: `a7bdf8acfed62547444671adbd945faa68c43ee2`
+- Development branch: `feature/neon-3d-battle-royale`
+- Inventory source: Git tree API, recursive listing; `38` tracked files, tree not truncated.
+- Safety: `main` is not modified. This manifest is committed on the development branch. **No tracked legacy file is deleted in this phase.** Any later deletion requires a separate explicit approval after reference checks.
+- Prototype scope: procedural 3D island, third-person capsule character and camera, simple modern hitscan weapon, offline bot targets, basic HUD/health, keyboard + touch-friendly controls, Godot Web/Android export checks. Not claiming final photorealistic art or 50-player online play.
+
+## Exact current tracked-file inventory and action plan
+
+| Path | Bytes | Planned action | Reason |
+|---|---:|---|---|
+| `.github/workflows/android-apk.yml` | 2596 | ADAPT after prototype exists | Extend/test Android build and add browser export workflow only after project scene is ready. |
+| `.gitignore` | 224 | KEEP unchanged | Existing asset/config/document; retain unless a verified dependency requires a later change. |
+| `README.md` | 1987 | UPDATE documentation after implementation | Document new project direction and honest test/build status; preserve release evidence where useful. |
+| `addons/touch_screen_joystick/touch_screen_joystick.gd` | 3705 | KEEP initially; review | May be reusable, but 3D control integration must be verified. |
+| `assets/player_ship.svg` | 1956 | KEEP unchanged | Existing asset/config/document; retain unless a verified dependency requires a later change. |
+| `assets/ui/neon_lobby_background.svg` | 10315 | KEEP unchanged | Existing asset/config/document; retain unless a verified dependency requires a later change. |
+| `docs/PHASES.md` | 4795 | UPDATE documentation after implementation | Document new project direction and honest test/build status; preserve release evidence where useful. |
+| `docs/QA_PHASE10.md` | 3239 | UPDATE documentation after implementation | Document new project direction and honest test/build status; preserve release evidence where useful. |
+| `docs/RELEASE_PHASE11.md` | 2622 | UPDATE documentation after implementation | Document new project direction and honest test/build status; preserve release evidence where useful. |
+| `export_presets.cfg` | 1826 | REVIEW/adapt | Verify Web and Android export presets against available Godot templates/CI. |
+| `icon.svg` | 302 | KEEP unchanged | Existing asset/config/document; retain unless a verified dependency requires a later change. |
+| `project.godot` | 1320 | REPLACE on feature branch only | Switch main scene/rendering/input to the new 3D prototype; main branch remains unchanged. |
+| `scenes/boss.tscn` | 908 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scenes/drone.tscn` | 336 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scenes/enemy.tscn` | 892 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scenes/energy_projectile.tscn` | 731 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scenes/main.tscn` | 8823 | REPLACE on feature branch only | Old 2D entry scene becomes the 3D island prototype entry scene. |
+| `scenes/menu.tscn` | 1047 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scenes/mobile_controls.tscn` | 921 | REPLACE on feature branch only | Old 2D player/touch logic is incompatible with the 3D controller; implement new 3D equivalents. |
+| `scenes/player.tscn` | 913 | REPLACE on feature branch only | Old 2D player/touch logic is incompatible with the 3D controller; implement new 3D equivalents. |
+| `scenes/xp_orb.tscn` | 682 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/boss.gd` | 1692 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/drone.gd` | 815 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/economy.gd` | 1707 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/enemy.gd` | 1172 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/enemy_spawner.gd` | 1164 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/energy_projectile.gd` | 1063 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/game_juice.gd` | 718 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/main.gd` | 9237 | REPLACE on feature branch only | Old 2D survival loop becomes 3D match orchestration. |
+| `scripts/menu.gd` | 13588 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/mobile_controls.gd` | 730 | REPLACE on feature branch only | Old 2D player/touch logic is incompatible with the 3D controller; implement new 3D equivalents. |
+| `scripts/neon_controls.gd` | 7053 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/player.gd` | 8376 | REPLACE on feature branch only | Old 2D player/touch logic is incompatible with the 3D controller; implement new 3D equivalents. |
+| `scripts/premium_menu.gd` | 2806 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/settings.gd` | 1114 | KEEP unchanged | Existing asset/config/document; retain unless a verified dependency requires a later change. |
+| `scripts/ship_modules.gd` | 485 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/starfield.gd` | 716 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+| `scripts/xp_orb.gd` | 447 | RETIRE from runtime; do not delete | Legacy 2D space-shooter system. Leave files in repo as rollback/reference until later explicit cleanup approval. |
+
+## New files planned for prototype (additive)
+- `scenes/world_3d.tscn` — procedural island/world root if separate scene remains maintainable.
+- `scripts/world_3d.gd` — terrain-like island, water edge, trees, roads and simple buildings generated from primitives.
+- `scripts/player_3d.gd` — third-person movement, camera-relative input, aiming/shooting, health.
+- `scripts/bot_3d.gd` — lightweight offline target/bot AI.
+- `scripts/hud_3d.gd` — match status and health HUD.
+- `docs/NEON_3D_TEST_REPORT.md` — test checklist and actual pass/fail evidence.
+
+## Deletion list
+**None in this phase.** Legacy 2D files are marked “retire from runtime; do not delete”, retained for rollback and inspection. No mass folder deletion.
+
+## Acceptance tests
+1. Godot project parses/imports with no script or scene errors.
+2. Main scene opens into a 3D island, player and third-person camera.
+3. WASD movement and mouse look work; firing reduces bot health; bots can damage player or otherwise demonstrate a functioning combat loop.
+4. Keyboard controls work in desktop/browser; touch controls remain usable on Android or are explicitly reported as pending if not verified.
+5. Run Web export and Android APK workflow. Report artifact/build status from actual CI, never infer success from code alone.
+6. Keep online multiplayer, matchmaking and authoritative server in a later phase.
