@@ -46,7 +46,7 @@ func _input(event: InputEvent) -> void:
 	if size.x <= 0.0 or size.y <= 0.0:
 		return
 	if event is InputEventScreenTouch:
-		var pos := event.position
+		var pos: Vector2 = event.position
 		if event.pressed:
 			if menu_open:
 				_handle_menu_touch(pos, size)
