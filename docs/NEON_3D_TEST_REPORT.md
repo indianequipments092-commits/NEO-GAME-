@@ -1,37 +1,38 @@
-# NEON 3D Prototype — Test Report
+# NEON 3D Battle Royale — Vertical Slice Test Report
 
 ## Scope
-Branch: `feature/neon-3d-battle-royale`  
-Baseline `main` commit: `a7bdf8acfed62547444671adbd945faa68c43ee2`  
-Engine target: Godot 4.6.3  
-Targets: Web and Android debug APK
+Branch: feature/neon-3d-battle-royale
+Pre-change head: 98828cff7292d3a64ed0f04cc0f9a5e560bc22b6
+Baseline main commit: a7bdf8acfed62547444671adbd945faa68c43ee2
+Engine target: Godot 4.6.3
+Target platforms: Android + Windows PC; current CI still exports Android and Web.
 
-## Implemented smoke-test scope
-- 3D scene boot with procedural island, road, buildings, trees and ocean.
-- Third-person player movement/look and hitscan firing.
-- 49 offline bots, bot health and attack behavior.
-- Player health, timer, win/loss messages, restart.
-- Keyboard plus touch-friendly move/fire buttons.
-- Web and Android export presets.
+## Changes in this commit
+- Reduced the active test match to eight bots for a smaller vertical slice.
+- Added collision shapes to test building shells, floors/roofs and tree trunks.
+- Added a clear doorway opening in procedural house shells.
+- Added a camera spring arm and right-side touch-drag camera look.
+- Added sprint, crouch and jump input.
+- Added line-of-sight validation before bots apply damage.
+- Repositioned HUD controls on viewport size changes.
+- Updated controls and implementation-status documentation.
 
-## Actual test results
-- Repository inventory and manifest: **PASS** — recursive tree returned 38 baseline tracked files; tree was not truncated.
-- Branch isolation: **PASS** — development work is on `feature/neon-3d-battle-royale`; `main` still points to baseline commit `a7bdf8acfed62547444671adbd945faa68c43ee2`.
-- Legacy file deletion: **PASS** — none performed.
-- Godot headless editor import: **PASS** — CI run completed the import/validation step.
-- Godot headless runtime smoke test: **PASS** — CI completed `--quit-after 12` with exit code 0.
-- Android debug APK export: **PASS** — CI export and APK verification completed.
-- Web export: **PASS** — CI exported the Web preset successfully.
-- Artifact upload: **PASS** — workflow uploaded combined Web and Android artifact (37,733,518 bytes).
-- Actual Android device/browser playtest and performance profiling: **NOT YET RUN**.
-- Local Godot executable: **NOT AVAILABLE** in this tool runtime; validation was performed by GitHub Actions instead.
+## Verification status
+- Source transformation checks: PASS — each targeted replacement matched exactly once before commit creation.
+- Godot parser/import: PENDING — must be verified by the next GitHub Actions run after this commit.
+- Android export: PENDING — must be verified by CI.
+- Web export: PENDING — must be verified by CI.
+- Windows export: NOT CONFIGURED/NOT TESTED in the current workflow.
+- Android phone and Windows PC playtests: NOT YET RUN.
+- FPS, memory, thermal and input-latency measurements: NOT YET RUN.
+- Main/legacy preservation: expected by scope; verify branch comparison and repository tree after push.
 
-## Successful CI evidence
-- Run: [NEON 3D — Web and Android builds #55](https://github.com/indianequipments092-commits/NEO-GAME-/actions/runs/40826954302)
-- Artifact: `NEON-3D-Battle-Royale-builds` (available from the workflow run's Artifacts section).
+## Visual quality gate — NOT PASSED
+The repository still lacks integrated game-ready character and environment assets. Procedural primitive meshes remain in use. This commit is a gameplay-foundation step only; it is not being presented as a realistic or release-ready visual slice.
 
-## Known limitations
-- The island and character are generated from primitive meshes; this is a functional greybox, not final photorealistic art or animation.
-- Bots are local AI, not online players. Online multiplayer, matchmaking, authoritative server and anti-cheat are future work.
-- Touch movement/fire are implemented; mobile camera-look gestures and final performance tuning remain follow-up work.
-- 50 combatants is a local bot scale smoke test, not evidence of 50-player online capacity.
+## Known risks to verify in CI/manual testing
+- SpringArm3D collision and touch drag on the target Android device.
+- Crouch shape resizing and jump/input interaction.
+- Building collision/doorway navigation and bot line-of-sight around cover.
+- Responsive HUD placement on different aspect ratios.
+- Current project renderer remains unchanged pending a tested renderer comparison.

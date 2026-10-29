@@ -68,7 +68,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
-	if distance < 14.0 and attack_timer <= 0.0:
+	if distance < 14.0 and attack_timer <= 0.0 and _has_line_of_sight():
 		attack_timer = 1.45
 		target.apply_damage(7)
 	if not is_on_floor():
@@ -76,6 +76,16 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = -0.5
 	move_and_slide()
+
+func _has_line_of_sight() -> bool:
+	if not is_instance_valid(target):
+		return false
+	var origin := global_position + Vector3(0, 1.35, 0)
+	var destination: Vector3 = target.global_position + Vector3(0, 1.0, 0)
+	var query := PhysicsRayQueryParameters3D.create(origin, destination)
+	query.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	return not hit.is_empty() and hit.get("collider") == target
 
 func take_damage(amount: int) -> void:
 	if dead:

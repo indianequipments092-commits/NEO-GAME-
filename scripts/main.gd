@@ -2,7 +2,7 @@ extends Node3D
 
 const PLAYER_SCRIPT = preload("res://scripts/player_3d.gd")
 const BOT_SCRIPT = preload("res://scripts/bot_3d.gd")
-const BOT_COUNT := 49
+const BOT_COUNT := 8
 var player
 var status_label: Label
 var message_label: Label
@@ -16,6 +16,8 @@ func _ready() -> void:
 	spawn_player()
 	spawn_bots()
 	build_hud()
+	get_viewport().size_changed.connect(_layout_hud)
+	_layout_hud()
 	if not OS.has_feature("mobile"):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	print("NEON 3D prototype ready: 1 player + %d offline bots" % BOT_COUNT)
@@ -114,8 +116,7 @@ func build_landmarks() -> void:
 	for i in range(house_positions.size()):
 		var p: Vector3 = house_positions[i]
 		var wall_color := Color(0.63, 0.56, 0.42) if i % 2 == 0 else Color(0.55, 0.62, 0.64)
-		make_box("House_%d" % i, Vector3(7.0, 3.2, 6.0), p + Vector3(0, 1.6, 0), wall_color)
-		make_box("Roof_%d" % i, Vector3(7.8, 0.5, 6.8), p + Vector3(0, 3.35, 0), Color(0.25, 0.15, 0.12))
+		build_house(p, i, wall_color)
 		make_box("Door_%d" % i, Vector3(1.0, 2.0, 0.12), p + Vector3(0, 1.0, -3.08), Color(0.18, 0.13, 0.1))
 
 	# Palm-like trees around the roads and coastline.
@@ -158,20 +159,55 @@ func make_tree(p: Vector3, scale_value: float, index: int) -> void:
 	crown_mat.roughness = 1.0
 	crown.material_override = crown_mat
 	tree.add_child(crown)
+	var trunk_body := StaticBody3D.new()
+	trunk_body.position.y = 1.2
+	var trunk_collision := CollisionShape3D.new()
+	var trunk_shape := CylinderShape3D.new()
+	trunk_shape.radius = 0.28
+	trunk_shape.height = 2.4
+	trunk_collision.shape = trunk_shape
+	trunk_body.add_child(trunk_collision)
+	tree.add_child(trunk_body)
 	add_child(tree)
 
-func make_box(object_name: String, size: Vector3, pos: Vector3, color: Color) -> void:
+func build_house(p: Vector3, index: int, wall_color: Color) -> void:
+	var floor_color := wall_color.darkened(0.24)
+	make_box("HouseFloor_%d" % index, Vector3(7.0, 0.2, 6.0), p, floor_color, true)
+	make_box("HouseBack_%d" % index, Vector3(7.0, 3.2, 0.22), p + Vector3(0, 1.7, 2.9), wall_color, true)
+	make_box("HouseLeft_%d" % index, Vector3(0.22, 3.2, 6.0), p + Vector3(-3.4, 1.7, 0), wall_color, true)
+	make_box("HouseRight_%d" % index, Vector3(0.22, 3.2, 6.0), p + Vector3(3.4, 1.7, 0), wall_color, true)
+	make_box("HouseFrontL_%d" % index, Vector3(2.8, 3.2, 0.22), p + Vector3(-2.1, 1.7, -2.9), wall_color, true)
+	make_box("HouseFrontR_%d" % index, Vector3(2.8, 3.2, 0.22), p + Vector3(2.1, 1.7, -2.9), wall_color, true)
+	make_box("HouseDoorHeader_%d" % index, Vector3(1.4, 0.55, 0.22), p + Vector3(0, 3.02, -2.9), wall_color, true)
+	make_box("Roof_%d" % index, Vector3(7.6, 0.35, 6.6), p + Vector3(0, 3.48, 0), Color(0.25, 0.15, 0.12), true)
+	for side in [-1.0, 1.0]:
+		make_box("Window_%d_%d" % [index, int(side)], Vector3(0.95, 0.85, 0.035), p + Vector3(side * 1.75, 2.05, -3.025), Color(0.08, 0.16, 0.20), false)
+
+func make_box(object_name: String, size: Vector3, pos: Vector3, color: Color, solid: bool = false) -> void:
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = object_name
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mesh_instance.mesh = mesh
-	mesh_instance.position = pos
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color
 	mat.roughness = 0.9
 	mesh_instance.material_override = mat
-	add_child(mesh_instance)
+	if solid:
+		var body := StaticBody3D.new()
+		body.name = object_name + "_Collision"
+		body.position = pos
+		add_child(body)
+		mesh_instance.position = Vector3.ZERO
+		body.add_child(mesh_instance)
+		var collision := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = size
+		collision.shape = shape
+		body.add_child(collision)
+	else:
+		mesh_instance.position = pos
+		add_child(mesh_instance)
 
 func spawn_player() -> void:
 	player = CharacterBody3D.new()
@@ -185,8 +221,8 @@ func spawn_bots() -> void:
 	for i in range(BOT_COUNT):
 		var bot := CharacterBody3D.new()
 		bot.set_script(BOT_SCRIPT)
-		var angle := TAU * float(i) / float(BOT_COUNT) + rng.randf_range(-0.16, 0.16)
-		var radius := rng.randf_range(24.0, 72.0)
+		var angle := TAU * float(i) / float(BOT_COUNT) + rng.randf_range(-0.12, 0.12)
+		var radius := rng.randf_range(46.0, 64.0)
 		bot.position = Vector3(cos(angle) * radius, 0.15, sin(angle) * radius)
 		add_child(bot)
 		bot.setup(player, i)
@@ -219,6 +255,7 @@ func build_hud() -> void:
 	make_hold_button(layer, "↓", Vector2(104, 578), "move_down")
 	make_hold_button(layer, "→", Vector2(176, 578), "move_right")
 	var fire_button := Button.new()
+	fire_button.name = "FireButton"
 	fire_button.text = "FIRE"
 	fire_button.position = Vector2(1090, 568)
 	fire_button.size = Vector2(145, 95)
@@ -229,8 +266,44 @@ func build_hud() -> void:
 	fire_button.button_up.connect(func(): Input.action_release("fire"))
 	layer.add_child(fire_button)
 
+	var jump_button := Button.new()
+	jump_button.name = "JumpButton"
+	jump_button.text = "JUMP"
+	jump_button.position = Vector2(920, 570)
+	jump_button.size = Vector2(110, 70)
+	jump_button.button_down.connect(func(): Input.action_press("jump"))
+	jump_button.button_up.connect(func(): Input.action_release("jump"))
+	layer.add_child(jump_button)
+
+func _layout_hud() -> void:
+	var size := get_viewport().get_visible_rect().size
+	var layer := get_node_or_null("BattleHUD") as CanvasLayer
+	if layer == null:
+		return
+	if is_instance_valid(status_label):
+		status_label.position = Vector2(20, 18)
+		status_label.size = Vector2(minf(size.x - 40.0, 780.0), 42)
+	if is_instance_valid(message_label):
+		message_label.position = Vector2((size.x - 720.0) * 0.5, (size.y - 100.0) * 0.5)
+	var fire := layer.get_node_or_null("FireButton") as Button
+	if fire:
+		fire.position = Vector2(size.x - 165.0, size.y - 120.0)
+	var jump := layer.get_node_or_null("JumpButton") as Button
+	if jump:
+		jump.position = Vector2(size.x - 300.0, size.y - 100.0)
+	for entry in [
+		["Button_move_up", Vector2(82.0, size.y - 172.0)],
+		["Button_move_left", Vector2(14.0, size.y - 98.0)],
+		["Button_move_down", Vector2(82.0, size.y - 98.0)],
+		["Button_move_right", Vector2(150.0, size.y - 98.0)]
+	]:
+		var move_button := layer.get_node_or_null(entry[0]) as Button
+		if move_button:
+			move_button.position = entry[1]
+
 func make_hold_button(layer: CanvasLayer, text_value: String, pos: Vector2, action: String) -> void:
 	var button := Button.new()
+	button.name = "Button_" + action
 	button.text = text_value
 	button.position = pos
 	button.size = Vector2(66, 62)
