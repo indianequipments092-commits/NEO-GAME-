@@ -24,7 +24,7 @@ try {
     $files = Get-ChildItem -LiteralPath $stage -File -Recurse
     if ($files.Count -eq 0) { throw "Update archive is empty" }
     foreach ($file in $files) {
-        $relative = [System.IO.Path]::GetRelativePath($stage, $file.FullName)
+        $relative = $file.FullName.Substring($stage.TrimEnd([char]92).Length).TrimStart([char]92)
         $destination = Join-Path $target $relative
         $parent = Split-Path -Parent $destination
         New-Item -ItemType Directory -Path $parent -Force | Out-Null
@@ -43,7 +43,9 @@ try {
     Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
     exit 0
 } catch {
-    foreach ($relative in ($changed | Select-Object -Reverse)) {
+    $changedArray = $changed.ToArray()
+    [array]::Reverse($changedArray)
+    foreach ($relative in $changedArray) {
         $destination = Join-Path $target $relative
         $backupPath = Join-Path $backup $relative
         if (Test-Path -LiteralPath $backupPath -PathType Leaf) {

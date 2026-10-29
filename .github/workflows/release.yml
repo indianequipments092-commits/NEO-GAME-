@@ -54,6 +54,9 @@ jobs:
           cp plugin/build/outputs/aar/plugin-debug.aar ../addons/neon_android_updater/bin/debug/NeonAndroidUpdater-debug.aar
           cp plugin/build/outputs/aar/plugin-release.aar ../addons/neon_android_updater/bin/release/NeonAndroidUpdater-release.aar
 
+      - name: Test release manifest generator
+        run: python3 tests/test_release_manifest.py
+
       - name: Download Godot 4.6.3
         run: |
           curl -L --fail --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
