@@ -111,7 +111,8 @@ func _handle_manifest_response(result: int, response_code: int, body: PackedByte
 		return
 	var url := str(platform_data.get("url", ""))
 	var checksum := str(platform_data.get("sha256", "")).to_lower()
-	if not url.begins_with(TRUSTED_RELEASE_PREFIX) or not _is_sha256(checksum):
+	var expected_prefix := TRUSTED_RELEASE_PREFIX + "v" + version + "/"
+	if int(manifest.get("schema_version", 0)) != 1 or not url.begins_with(expected_prefix) or not _is_sha256(checksum):
 		_set_status("Update source failed validation")
 		return
 	_manifest = manifest
@@ -155,6 +156,7 @@ func _handle_download_response(result: int, response_code: int) -> void:
 	_http.download_file = ""
 	_button.disabled = false
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(_download_path))
 		_set_status("Download failed — retry")
 		_button.text = "RETRY UPDATE"
 		return
