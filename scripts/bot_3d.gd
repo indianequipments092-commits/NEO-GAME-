@@ -1,13 +1,13 @@
 extends CharacterBody3D
 
 const GRAVITY := 22.0
-var target: CharacterBody3D
+var target
 var health := 100
 var attack_timer := 0.0
 var strafe_sign := 1.0
 var dead := false
 
-func setup(player: CharacterBody3D, index: int) -> void:
+func setup(player, index: int) -> void:
 	target = player
 	strafe_sign = -1.0 if index % 2 == 0 else 1.0
 
