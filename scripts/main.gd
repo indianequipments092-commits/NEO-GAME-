@@ -1,277 +1,240 @@
-extends Node2D
+extends Node3D
 
-# NEON SPACE SURVIVAL — Phase 12 UI integration.
-const XP_ORB := preload("res://scenes/xp_orb.tscn")
-const ENEMY := preload("res://scenes/enemy.tscn")
-const BOSS := preload("res://scenes/boss.tscn")
-
-var survival_time := 0.0
-var xp_spawn_time := 0.0
-var enemy_spawn_time := 0.0
-var xp_spawn_interval := 1.5
-var enemy_spawn_interval := 1.5
-var boss_spawned := false
-var module_input_cooldown := 0.0
-var meta_cores := 0
-var juice_time := 0.0
-var run_reward_claimed := false
-var game_over := false
-var _game_over_touch_lock := false
-const MAX_ACTIVE_ENEMIES := 24
-
-@onready var timer_label: Label = $HUD/TopLeft/TimerLabel
-@onready var player: CharacterBody2D = $Player
-@onready var boss_label: Label = $HUD/BossPanel/BossLabel
-@onready var boss_bar: ProgressBar = $HUD/BossPanel/BossBar
-@onready var xp_bar: ProgressBar = $HUD/XPBar
-@onready var economy: Node = $Economy
-@onready var credits_label: Label = $HUD/CreditsPanel/CreditsLabel
-@onready var game_over_panel: Panel = $HUD/GameOverPanel
-@onready var mobile_controls: CanvasLayer = $MobileControls
+const PLAYER_SCRIPT = preload("res://scripts/player_3d.gd")
+const BOT_SCRIPT = preload("res://scripts/bot_3d.gd")
+const BOT_COUNT := 49
+var player: CharacterBody3D
+var status_label: Label
+var message_label: Label
+var alive_bots := BOT_COUNT
+var elapsed := 0.0
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	timer_label.text = "SURVIVAL  00:00"
-	_update_progression_hud()
-	_update_health_hud()
-	_update_economy_hud()
-	_build_game_over_actions()
-	_set_game_over_state(false)
-
-func _input(event: InputEvent) -> void:
-	if not game_over or _game_over_touch_lock:
-		return
-	if event is InputEventScreenTouch and event.pressed:
-		var p := event.position
-		var restart_rect := Rect2(475, 365, 155, 55)
-		var exit_rect := Rect2(650, 365, 155, 55)
-		if restart_rect.has_point(p):
-			_game_over_touch_lock = true
-			restart_run()
-			get_viewport().set_input_as_handled()
-		elif exit_rect.has_point(p):
-			_game_over_touch_lock = true
-			exit_to_lobby()
-			get_viewport().set_input_as_handled()
+	build_environment()
+	build_island()
+	build_landmarks()
+	spawn_player()
+	spawn_bots()
+	build_hud()
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	print("NEON 3D prototype ready: 1 player + %d offline bots" % BOT_COUNT)
 
 func _process(delta: float) -> void:
-	if get_tree().paused or game_over:
-		return
-	survival_time += delta
-	xp_spawn_time += delta
-	enemy_spawn_time += delta
-	module_input_cooldown = maxf(0.0, module_input_cooldown - delta)
-	juice_time += delta
-	if xp_spawn_time >= xp_spawn_interval:
-		xp_spawn_time = 0.0
-		_spawn_xp_orb()
-	if enemy_spawn_time >= enemy_spawn_interval:
-		enemy_spawn_time = 0.0
-		_spawn_enemy()
-	if survival_time >= 60.0 and not boss_spawned:
-		boss_spawned = true
-		_spawn_boss()
-	_handle_module_input()
-	_update_boss_juice()
-	var total_seconds := int(survival_time)
-	var minutes := total_seconds / 60
-	var seconds := total_seconds % 60
-	timer_label.text = "SURVIVAL  %02d:%02d" % [minutes, seconds]
+	elapsed += delta
+	alive_bots = get_tree().get_nodes_in_group("bots").size()
+	if is_instance_valid(status_label) and is_instance_valid(player):
+		status_label.text = "NEON 3D  |  HP %d  |  BOTS %d  |  %02d:%02d" % [player.health, alive_bots, int(elapsed) / 60, int(elapsed) % 60]
+	if player != null and player.is_dead:
+		message_label.text = "ELIMINATED — Press R to restart"
+		message_label.visible = true
+	elif alive_bots == 0:
+		message_label.text = "WINNER! Island secured — Press R to play again"
+		message_label.visible = true
+	else:
+		message_label.visible = false
+	if Input.is_key_pressed(KEY_R) and (player.is_dead or alive_bots == 0):
+		get_tree().reload_current_scene()
 
-func _build_game_over_actions() -> void:
-	var panel := game_over_panel
-	panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	panel.process_mode = Node.PROCESS_MODE_ALWAYS
-	var sub := panel.get_node_or_null("GameOverSubLabel")
-	if sub == null:
-		sub = Label.new()
-		sub.name = "GameOverSubLabel"
-		sub.position = Vector2(25, 108)
-		sub.size = Vector2(370, 40)
-		sub.add_theme_font_size_override("font_size", 14)
-		sub.add_theme_color_override("font_color", Color("ff7088"))
-		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		panel.add_child(sub)
-	sub.text = "YOUR SHIP HAS BEEN DESTROYED"
+func build_environment() -> void:
+	var environment := WorldEnvironment.new()
+	var env := Environment.new()
+	env.background_mode = Environment.BG_SKY
+	var sky := Sky.new()
+	var sky_material := ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.16, 0.35, 0.58)
+	sky_material.sky_horizon_color = Color(0.72, 0.82, 0.87)
+	sky_material.ground_bottom_color = Color(0.12, 0.19, 0.22)
+	sky_material.ground_horizon_color = Color(0.52, 0.62, 0.58)
+	sky.sky_material = sky_material
+	env.sky = sky
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.65, 0.72, 0.78)
+	env.ambient_light_energy = 0.65
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	environment.environment = env
+	add_child(environment)
 
-	var restart := panel.get_node_or_null("RestartButton") as Button
-	if restart:
-		restart.visible = true
-		restart.disabled = false
-		restart.mouse_filter = Control.MOUSE_FILTER_STOP
-		restart.process_mode = Node.PROCESS_MODE_ALWAYS
-		restart.focus_mode = Control.FOCUS_ALL
-		restart.position = Vector2(45, 160)
-		restart.size = Vector2(155, 55)
-		restart.text = "RESTART RUN"
-		restart.add_theme_font_size_override("font_size", 16)
-	if restart and not restart.pressed.is_connected(restart_run):
-		restart.pressed.connect(restart_run)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-48, -25, 0)
+	sun.light_energy = 1.25
+	sun.shadow_enabled = true
+	add_child(sun)
 
-	var exit := panel.get_node_or_null("ExitButton") as Button
-	if exit == null:
-		exit = Button.new()
-		exit.name = "ExitButton"
-		panel.add_child(exit)
-	exit.visible = true
-	exit.disabled = false
-	exit.mouse_filter = Control.MOUSE_FILTER_STOP
-	exit.process_mode = Node.PROCESS_MODE_ALWAYS
-	exit.focus_mode = Control.FOCUS_ALL
-	exit.position = Vector2(220, 160)
-	exit.size = Vector2(155, 55)
-	exit.text = "EXIT"
-	exit.add_theme_font_size_override("font_size", 16)
-	exit.add_theme_color_override("font_color", Color("dff8ff"))
-	if not exit.pressed.is_connected(exit_to_lobby):
-		exit.pressed.connect(exit_to_lobby)
+func build_island() -> void:
+	var ocean := MeshInstance3D.new()
+	var ocean_mesh := PlaneMesh.new()
+	ocean_mesh.size = Vector2(600, 600)
+	ocean.mesh = ocean_mesh
+	ocean.position.y = -4.1
+	var water := StandardMaterial3D.new()
+	water.albedo_color = Color(0.035, 0.22, 0.31)
+	water.metallic = 0.18
+	water.roughness = 0.28
+	ocean.material_override = water
+	add_child(ocean)
 
-func _set_game_over_state(value: bool) -> void:
-	game_over = value
-	_game_over_touch_lock = false
-	game_over_panel.visible = value
-	game_over_panel.process_mode = Node.PROCESS_MODE_ALWAYS
-	if mobile_controls:
-		mobile_controls.visible = not value
-		mobile_controls.process_mode = Node.PROCESS_MODE_ALWAYS
-		var controls := mobile_controls.get_node_or_null("Controls")
-		if controls:
-			controls.visible = not value
-			controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var joystick := mobile_controls.get_node_or_null("FloatingJoystick")
-		if joystick:
-			joystick.visible = not value
-			joystick.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if value:
-		Input.action_release("fire")
-		get_tree().paused = true
+	var island := StaticBody3D.new()
+	island.name = "IslandGround"
+	var ground_mesh := MeshInstance3D.new()
+	var cylinder := CylinderMesh.new()
+	cylinder.top_radius = 86.0
+	cylinder.bottom_radius = 91.0
+	cylinder.height = 4.0
+	ground_mesh.mesh = cylinder
+	ground_mesh.position.y = -2.0
+	var ground_material := StandardMaterial3D.new()
+	ground_material.albedo_color = Color(0.23, 0.39, 0.22)
+	ground_material.roughness = 1.0
+	ground_mesh.material_override = ground_material
+	island.add_child(ground_mesh)
+	var ground_collision := CollisionShape3D.new()
+	var ground_shape := CylinderShape3D.new()
+	ground_shape.radius = 86.0
+	ground_shape.height = 4.0
+	ground_collision.shape = ground_shape
+	ground_collision.position.y = -2.0
+	island.add_child(ground_collision)
+	add_child(island)
 
-func on_player_game_over() -> void:
-	if game_over:
-		return
-	_set_game_over_state(true)
+func build_landmarks() -> void:
+	# Main road and cross-road.
+	make_box("MainRoad", Vector3(4.0, 0.08, 116.0), Vector3(0, 0.035, 0), Color(0.16, 0.18, 0.18))
+	make_box("CrossRoad", Vector3(110.0, 0.08, 4.0), Vector3(0, 0.04, -8), Color(0.16, 0.18, 0.18))
+	for i in range(15):
+		var z := -48.0 + float(i) * 6.5
+		make_box("RoadMark", Vector3(0.18, 0.025, 2.8), Vector3(0, 0.09, z), Color(0.88, 0.82, 0.54))
 
-func _handle_module_input() -> void:
-	if module_input_cooldown > 0.0 or player.upgrade_points <= 0:
-		return
-	if Input.is_key_pressed(KEY_1):
-		player.install_module("engine")
-		module_input_cooldown = 0.25
-	elif Input.is_key_pressed(KEY_2):
-		player.install_module("core")
-		module_input_cooldown = 0.25
-	elif Input.is_key_pressed(KEY_3):
-		player.install_module("drone")
-		module_input_cooldown = 0.25
+	# Small compound buildings, roofs and doors are all local primitives.
+	var house_positions := [
+		Vector3(15, 0, -24), Vector3(25, 0, -27), Vector3(-18, 0, -25),
+		Vector3(-28, 0, -18), Vector3(18, 0, 18), Vector3(-18, 0, 22),
+		Vector3(36, 0, 8), Vector3(-37, 0, 5), Vector3(8, 0, 39)
+	]
+	for i in range(house_positions.size()):
+		var p: Vector3 = house_positions[i]
+		var wall_color := Color(0.63, 0.56, 0.42) if i % 2 == 0 else Color(0.55, 0.62, 0.64)
+		make_box("House_%d" % i, Vector3(7.0, 3.2, 6.0), p + Vector3(0, 1.6, 0), wall_color)
+		make_box("Roof_%d" % i, Vector3(7.8, 0.5, 6.8), p + Vector3(0, 3.35, 0), Color(0.25, 0.15, 0.12))
+		make_box("Door_%d" % i, Vector3(1.0, 2.0, 0.12), p + Vector3(0, 1.0, -3.08), Color(0.18, 0.13, 0.1))
 
-func _spawn_xp_orb() -> void:
-	var orb := XP_ORB.instantiate()
-	var margin := 80.0
-	orb.position = Vector2(randf_range(margin, 1280.0 - margin), randf_range(margin, 720.0 - margin))
-	add_child(orb)
+	# Palm-like trees around the roads and coastline.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20261029
+	for i in range(72):
+		var angle := rng.randf_range(0.0, TAU)
+		var radius := rng.randf_range(23.0, 77.0)
+		var p := Vector3(cos(angle) * radius, 0, sin(angle) * radius)
+		if absf(p.x) < 5.0 or (absf(p.z + 8.0) < 5.0):
+			continue
+		if p.distance_to(Vector3(15, 0, -24)) < 9.0 or p.distance_to(Vector3(-18, 0, 22)) < 9.0:
+			continue
+		make_tree(p, rng.randf_range(0.8, 1.3), i)
 
-func spawn_enemy_xp(spawn_position: Vector2, value: int) -> void:
-	var orb := XP_ORB.instantiate()
-	orb.position = spawn_position
-	orb.xp_value = value
-	add_child(orb)
+func make_tree(p: Vector3, scale_value: float, index: int) -> void:
+	var tree := Node3D.new()
+	tree.name = "Tree_%d" % index
+	tree.position = p
+	tree.scale = Vector3.ONE * scale_value
+	var trunk := MeshInstance3D.new()
+	var trunk_mesh := CylinderMesh.new()
+	trunk_mesh.top_radius = 0.18
+	trunk_mesh.bottom_radius = 0.28
+	trunk_mesh.height = 2.4
+	trunk.mesh = trunk_mesh
+	trunk.position.y = 1.2
+	var trunk_mat := StandardMaterial3D.new()
+	trunk_mat.albedo_color = Color(0.25, 0.17, 0.1)
+	trunk.material_override = trunk_mat
+	tree.add_child(trunk)
+	var crown := MeshInstance3D.new()
+	var crown_mesh := SphereMesh.new()
+	crown_mesh.radius = 1.2
+	crown_mesh.height = 2.3
+	crown.mesh = crown_mesh
+	crown.position.y = 2.7
+	var crown_mat := StandardMaterial3D.new()
+	crown_mat.albedo_color = Color(0.12, 0.31 + float(index % 3) * 0.04, 0.15)
+	crown_mat.roughness = 1.0
+	crown.material_override = crown_mat
+	tree.add_child(crown)
+	add_child(tree)
 
-func _spawn_enemy() -> void:
-	var active := 0
-	for child in get_children():
-		if child.is_in_group("enemies"):
-			active += 1
-	if active >= MAX_ACTIVE_ENEMIES:
-		return
-	var enemy := ENEMY.instantiate()
-	enemy.name = "Enemy_%03d" % active
-	enemy.add_to_group("enemies")
-	enemy.position = _random_enemy_spawn_position()
-	add_child(enemy)
+func make_box(object_name: String, size: Vector3, pos: Vector3, color: Color) -> void:
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = object_name
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	mesh_instance.mesh = mesh
+	mesh_instance.position = pos
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.9
+	mesh_instance.material_override = mat
+	add_child(mesh_instance)
 
-func _random_enemy_spawn_position() -> Vector2:
-	var side := randi() % 4
-	match side:
-		0: return Vector2(randf_range(90.0, 1190.0), 115.0)
-		1: return Vector2(randf_range(90.0, 1190.0), 605.0)
-		2: return Vector2(90.0, randf_range(115.0, 605.0))
-		_: return Vector2(1190.0, randf_range(115.0, 605.0))
+func spawn_player() -> void:
+	player = CharacterBody3D.new()
+	player.set_script(PLAYER_SCRIPT)
+	player.position = Vector3(0, 0.15, 12)
+	add_child(player)
 
-func _spawn_boss() -> void:
-	var boss := BOSS.instantiate()
-	boss.position = Vector2(640, 100)
-	add_child(boss)
-	boss_label.text = "BOSS  500 / 500"
-	boss_bar.value = 100.0
-	$HUD/BossPanel.visible = true
+func spawn_bots() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 72026
+	for i in range(BOT_COUNT):
+		var bot := CharacterBody3D.new()
+		bot.set_script(BOT_SCRIPT)
+		var angle := TAU * float(i) / float(BOT_COUNT) + rng.randf_range(-0.16, 0.16)
+		var radius := rng.randf_range(24.0, 72.0)
+		bot.position = Vector3(cos(angle) * radius, 0.15, sin(angle) * radius)
+		add_child(bot)
+		bot.setup(player, i)
 
-func _update_boss_juice() -> void:
-	if not boss_spawned:
-		return
-	var boss: Node = get_node_or_null("Boss")
-	if boss == null:
-		for child in get_children():
-			if child is CharacterBody2D and child.has_method("take_damage") and child != player:
-				boss = child
-				break
-	if boss != null and is_instance_valid(boss):
-		boss_bar.value = (float(boss.health) / float(boss.max_health)) * 100.0
-		boss_label.text = "BOSS  %03d / %03d" % [int(ceil(boss.health)), int(boss.max_health)]
-	var pulse := 0.85 + sin(juice_time * 5.0) * 0.15
-	boss_label.modulate.a = pulse
-	boss_label.scale = Vector2.ONE * (1.0 + sin(juice_time * 5.0) * 0.03)
+func build_hud() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "BattleHUD"
+	add_child(layer)
+	status_label = Label.new()
+	status_label.position = Vector2(22, 18)
+	status_label.size = Vector2(780, 42)
+	status_label.add_theme_font_size_override("font_size", 24)
+	status_label.add_theme_color_override("font_color", Color(0.94, 0.98, 1.0))
+	status_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	status_label.add_theme_constant_override("shadow_offset_x", 2)
+	status_label.add_theme_constant_override("shadow_offset_y", 2)
+	layer.add_child(status_label)
 
-func claim_run_reward() -> void:
-	if run_reward_claimed:
-		return
-	run_reward_claimed = true
-	var reward: int = economy.claim_run_reward(int(survival_time))
-	credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
+	message_label = Label.new()
+	message_label.position = Vector2(280, 270)
+	message_label.size = Vector2(720, 100)
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message_label.add_theme_font_size_override("font_size", 30)
+	message_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.3))
+	message_label.visible = false
+	layer.add_child(message_label)
 
-func claim_rewarded_ad_placeholder() -> void:
-	var reward: int = economy.claim_ad_reward_placeholder()
-	if reward > 0:
-		credits_label.text = "CREDITS  %04d  (+%d)" % [economy.get_credits(), reward]
+	make_hold_button(layer, "↑", Vector2(104, 510), "move_up")
+	make_hold_button(layer, "←", Vector2(32, 578), "move_left")
+	make_hold_button(layer, "↓", Vector2(104, 578), "move_down")
+	make_hold_button(layer, "→", Vector2(176, 578), "move_right")
+	var fire_button := Button.new()
+	fire_button.text = "FIRE"
+	fire_button.position = Vector2(1090, 568)
+	fire_button.size = Vector2(145, 95)
+	fire_button.add_theme_font_size_override("font_size", 24)
+	fire_button.add_theme_color_override("font_color", Color.WHITE)
+	fire_button.modulate = Color(1.0, 0.34, 0.2, 0.92)
+	fire_button.button_down.connect(func(): Input.action_press("fire"))
+	fire_button.button_up.connect(func(): Input.action_release("fire"))
+	layer.add_child(fire_button)
 
-func restart_run() -> void:
-	_game_over_touch_lock = true
-	game_over = false
-	get_tree().paused = false
-	get_tree().reload_current_scene()
-
-func exit_to_lobby() -> void:
-	_game_over_touch_lock = true
-	game_over = false
-	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/menu.tscn")
-
-func add_meta_core() -> void:
-	meta_cores += 1
-
-func get_meta_cores() -> int:
-	return meta_cores
-
-func _random_edge_position() -> Vector2:
-	var edge := randi() % 4
-	match edge:
-		0: return Vector2(randf_range(60.0, 1220.0), 60.0)
-		1: return Vector2(randf_range(60.0, 1220.0), 660.0)
-		2: return Vector2(60.0, randf_range(60.0, 660.0))
-		_: return Vector2(1220.0, randf_range(60.0, 660.0))
-
-func _update_progression_hud() -> void:
-	var level_label := $HUD/TopLeft/LevelLabel
-	var xp_label := $HUD/TopLeft/XPLabel
-	level_label.text = "LV  %02d" % player.level
-	xp_label.text = "XP  %03d / %03d" % [player.xp, player.xp_to_next_level]
-	xp_bar.value = (float(player.xp) / float(player.xp_to_next_level)) * 100.0
-
-func _update_health_hud() -> void:
-	var health_label := $HUD/StatusPanel/HealthLabel
-	var health_bar := $HUD/StatusPanel/HealthBar
-	health_label.text = "HULL  %03d / %03d" % [player.health, player.max_health]
-	health_bar.value = (float(player.health) / float(player.max_health)) * 100.0
-
-func _update_economy_hud() -> void:
-	if is_instance_valid(economy) and is_instance_valid(credits_label):
-		credits_label.text = "CREDITS  %04d" % economy.get_credits()
+func make_hold_button(layer: CanvasLayer, text_value: String, pos: Vector2, action: String) -> void:
+	var button := Button.new()
+	button.text = text_value
+	button.position = pos
+	button.size = Vector2(66, 62)
+	button.add_theme_font_size_override("font_size", 24)
+	button.modulate = Color(0.75, 0.88, 0.95, 0.78)
+	button.button_down.connect(func(): Input.action_press(action))
+	button.button_up.connect(func(): Input.action_release(action))
+	layer.add_child(button)
