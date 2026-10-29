@@ -1,10 +1,10 @@
-; NEON SPACE SURVIVAL — Godot 4 release configuration
+; NEON 3D BATTLE ROYALE — Godot 4
 config_version=5
 
 [application]
-config/name="NEON SPACE SURVIVAL"
-config/description="A fast-paced neon space survival roguelite."
-config/version="1.0.0"
+config/name="NEON 3D BATTLE ROYALE"
+config/description="A third-person island combat prototype with offline bots."
+config/version="0.2.0"
 config/icon="res://icon.svg"
 run/main_scene="res://scenes/main.tscn"
 
